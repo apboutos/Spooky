@@ -1,0 +1,18 @@
+DeadDynamiteBlock.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+DeadDynamiteBlock1
+  rotate: false
+  xy: 2, 2
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+DeadDynamiteBlock2
+  rotate: false
+  xy: 44, 2
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1

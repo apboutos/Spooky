@@ -1,0 +1,26 @@
+DeadBouncingBlock.png
+size: 126, 42
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+DeadBouncingBlock1
+  rotate: false
+  xy: 0, 0
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: 1
+DeadBouncingBlock2
+  rotate: false
+  xy: 40, 0
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: 2
+DeadBouncingBlock3
+  rotate: false
+  xy: 80, 0
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: 3
