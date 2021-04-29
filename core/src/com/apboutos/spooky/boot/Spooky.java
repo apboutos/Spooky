@@ -9,7 +9,6 @@ import com.apboutos.spooky.level.SettingsScreen;
 import com.apboutos.spooky.screen.MainMenu;
 import com.apboutos.spooky.screen.Splash;
 import com.apboutos.spooky.utilities.GameDimensions;
-import com.apboutos.spooky.utilities.GameSystem;
 
 public class Spooky extends Game {
 	public Splash splash; // The splash screen
