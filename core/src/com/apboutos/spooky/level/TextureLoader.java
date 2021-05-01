@@ -3,6 +3,7 @@ package com.apboutos.spooky.level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import lombok.Getter;
 
 
 /**
@@ -17,105 +18,60 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
  */
 
 
-
+@SuppressWarnings("DuplicatedCode")
+@Getter
 public class TextureLoader {
 
-	private TextureAtlas playerMovingLeft;
-	private TextureAtlas playerMovingRight;
-	private TextureAtlas playerMovingUp;
-	private TextureAtlas playerMovingDown;
-	
-	private TextureAtlas deadStandardBlock;
-	private TextureAtlas deadBouncingBlock;
-	private TextureAtlas deadBigBouncingBlock;
-	private TextureAtlas deadDynamiteBlock;
-	private TextureAtlas deadBigDynamiteBlock;
-	private TextureAtlas explosion;
-	
-	private Texture standardBlock;
-	private Texture bouncingBlock;
-	private Texture bigBouncingBlock;
-	private Texture diamondBlock;
-	private Texture superDiamondBlock;
-	private Texture dynamiteBlock;
-	private Texture bigDynamiteBlock;
-	
-	private TextureAtlas fishMovingLeft;
-	private TextureAtlas fishMovingRight;
-	private TextureAtlas fishMovingUp;
-	private TextureAtlas fishMovingDown;
-	
-	private TextureAtlas sharkLeft;
-	private TextureAtlas sharkRight;
-	private TextureAtlas sharkUp;
-	private TextureAtlas sharkDown;
-	
-	private Texture starRed;
-	private Texture starBlue;
-	private Texture starYellow;
-	private Texture starGrey;
-	
-	private Texture squash;
-	private Texture bubblesBackground;
-	
-	private Texture newGameButton;
-	
-	
-	
-	/**
-	 * Constructor that loads all the game's textures in the memory
-	 * TODO For even more efficiency this class should be customized to load into memory only the
-	 * textures required for the level the player is currently in.
-	 */
-	public TextureLoader(){
-		
-		playerMovingLeft  = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyLeft.atlas"));
-		playerMovingRight = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyRight.atlas"));
-		playerMovingUp    = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyUp.atlas"));
-		playerMovingDown  = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyDown.atlas"));
-		
-		deadStandardBlock    = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/Standard/DeadStandardBlock.atlas"));
-		deadBouncingBlock    = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/Bouncing/DeadBouncingBlock.atlas"));
-		deadBigBouncingBlock = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/BigBouncing/DeadBigBouncingBlock.atlas"));
-		deadDynamiteBlock    = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/Dynamite/DeadDynamiteBlock.atlas"));
-		deadBigDynamiteBlock = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/BigDynamite/DeadBigDynamiteBlock.atlas"));
-		explosion            = new TextureAtlas(Gdx.files.internal("Images/Effect/Explosion.atlas"));
-		
-		standardBlock     = new Texture(Gdx.files.internal("Images/Unit/Block/Standard/StandardBlock.png"));
-		bouncingBlock     = new Texture(Gdx.files.internal("Images/Unit/Block/Bouncing/BouncingBlock.png"));
-		bigBouncingBlock  = new Texture(Gdx.files.internal("Images/Unit/Block/BigBouncing/BigBouncingBlock.png"));
-		diamondBlock      = new Texture(Gdx.files.internal("Images/Unit/Block/Diamond/DiamondBlock.png"));
-		superDiamondBlock = new Texture(Gdx.files.internal("Images/Unit/Block/Diamond/SuperDiamondBlock.png"));
-		dynamiteBlock     = new Texture(Gdx.files.internal("Images/Unit/Block/Dynamite/DynamiteBlock.png"));
-		bigDynamiteBlock  = new Texture(Gdx.files.internal("Images/Unit/Block/BigDynamite/BigDynamiteBlock.png"));
-		
-		
-		fishMovingLeft  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishLeft.atlas"));
-		fishMovingRight = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishRight.atlas"));
-		fishMovingUp    = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishUp.atlas"));
-		fishMovingDown  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishDown.atlas"));
-	
-		sharkLeft  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkLeft.atlas"));
-		sharkRight = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkRight.atlas"));
-		sharkUp    = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkUp.atlas"));
-		sharkDown  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkDown.atlas"));
-		
-		
-		starRed    = new Texture(Gdx.files.internal("Images/Effect/SquashStarRed.png"));
-		starBlue   = new Texture(Gdx.files.internal("Images/Effect/SquashStarBlue.png"));
-		starYellow = new Texture(Gdx.files.internal("Images/Effect/SquashStarYellow.png"));
-		starGrey   = new Texture(Gdx.files.internal("Images/Effect/SquashStarGrey.png"));
-		
-		squash = new Texture(Gdx.files.internal("Images/Effect/Squash.png"));
-		bubblesBackground = new Texture(Gdx.files.internal("Images/Background/BubblesBackground2.jpg"));
-		
-		newGameButton = new Texture(Gdx.files.internal("Images/Background/BubblesBackground2.jpg"));
+	public static final TextureAtlas playerMovingLeft = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyLeft.atlas"));
+	public static final TextureAtlas playerMovingRight = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyRight.atlas"));
+	public static final TextureAtlas playerMovingUp    = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyUp.atlas"));
+	public static final TextureAtlas playerMovingDown  = new TextureAtlas(Gdx.files.internal("Images/Unit/Player/SpookyDown.atlas"));
+
+	public static final TextureAtlas deadStandardBlock    = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/Standard/DeadStandardBlock.atlas"));
+	public static final TextureAtlas deadBouncingBlock    = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/Bouncing/DeadBouncingBlock.atlas"));
+	public static final TextureAtlas deadBigBouncingBlock = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/BigBouncing/DeadBigBouncingBlock.atlas"));
+	public static final TextureAtlas deadDynamiteBlock    = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/Dynamite/DeadDynamiteBlock.atlas"));
+	public static final TextureAtlas deadBigDynamiteBlock = new TextureAtlas(Gdx.files.internal("Images/Unit/Block/BigDynamite/DeadBigDynamiteBlock.atlas"));
+	public static final TextureAtlas explosion            = new TextureAtlas(Gdx.files.internal("Images/Effect/Explosion.atlas"));
+
+	public static final Texture standardBlock     = new Texture(Gdx.files.internal("Images/Unit/Block/Standard/StandardBlock.png"));
+	public static final Texture bouncingBlock     = new Texture(Gdx.files.internal("Images/Unit/Block/Bouncing/BouncingBlock.png"));
+	public static final Texture bigBouncingBlock  = new Texture(Gdx.files.internal("Images/Unit/Block/BigBouncing/BigBouncingBlock.png"));
+	public static final Texture diamondBlock      = new Texture(Gdx.files.internal("Images/Unit/Block/Diamond/DiamondBlock.png"));
+	public static final Texture superDiamondBlock = new Texture(Gdx.files.internal("Images/Unit/Block/Diamond/SuperDiamondBlock.png"));
+	public static final Texture dynamiteBlock     = new Texture(Gdx.files.internal("Images/Unit/Block/Dynamite/DynamiteBlock.png"));
+	public static final Texture bigDynamiteBlock  = new Texture(Gdx.files.internal("Images/Unit/Block/BigDynamite/BigDynamiteBlock.png"));
+
+	public static final TextureAtlas fishMovingLeft  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishLeft.atlas"));
+	public static final TextureAtlas fishMovingRight = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishRight.atlas"));
+	public static final TextureAtlas fishMovingUp    = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishUp.atlas"));
+	public static final TextureAtlas fishMovingDown  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Fish/FishDown.atlas"));
+
+	public static final TextureAtlas sharkLeft  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkLeft.atlas"));
+	public static final TextureAtlas sharkRight = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkRight.atlas"));
+	public static final TextureAtlas sharkUp    = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkUp.atlas"));
+	public static final TextureAtlas sharkDown  = new TextureAtlas(Gdx.files.internal("Images/Unit/Enemy/Shark/SharkDown.atlas"));
+
+
+	public static final Texture starRed    = new Texture(Gdx.files.internal("Images/Effect/SquashStarRed.png"));
+	public static final Texture starBlue   = new Texture(Gdx.files.internal("Images/Effect/SquashStarBlue.png"));
+	public static final Texture starYellow = new Texture(Gdx.files.internal("Images/Effect/SquashStarYellow.png"));
+	public static final Texture starGrey   = new Texture(Gdx.files.internal("Images/Effect/SquashStarGrey.png"));
+	public static final Texture starGreen  = new Texture(Gdx.files.internal("Images/Effect/SquashStarGrey.png"));
+
+	public static final Texture squash = new Texture(Gdx.files.internal("Images/Effect/Squash.png"));
+	public static final Texture bubblesBackground = new Texture(Gdx.files.internal("Images/Background/BubblesBackground2.jpg"));
+
+	public static final Texture newGameButton = new Texture(Gdx.files.internal("Images/Background/BubblesBackground2.jpg"));
+
+	private TextureLoader(){
+
 	}
 
 	/**
 	 * Clean up dispose method.
 	 */
-	public void dispose(){
+	public static void dispose(){
 		
 		playerMovingLeft.dispose();
 		playerMovingRight.dispose();
@@ -157,153 +113,5 @@ public class TextureLoader {
 		
 		newGameButton.dispose();
 		
-	}
-
-	public TextureAtlas getPlayerMovingLeft() {
-		return playerMovingLeft;
-	}
-
-
-	public TextureAtlas getPlayerMovingRight() {
-		return playerMovingRight;
-	}
-
-
-	public TextureAtlas getPlayerMovingUp() {
-		return playerMovingUp;
-	}
-
-
-	public TextureAtlas getPlayerMovingDown() {
-		return playerMovingDown;
-	}
-
-
-	public TextureAtlas getDeadStandardBlock() {
-		return deadStandardBlock;
-	}
-
-
-	public TextureAtlas getDeadBouncingBlock() {
-		return deadBouncingBlock;
-	}
-
-	
-	public TextureAtlas getDeadBigBouncingBlock(){
-		return deadBigBouncingBlock;
-	}
-
-	
-	public TextureAtlas getDeadDynamiteBlock(){
-		return deadDynamiteBlock;
-	}
-	
-	
-	public TextureAtlas getDeadBigDynamiteBlock(){
-		return deadBigDynamiteBlock;
-	}
-	
-	
-	public Texture getStandardBlock() {
-		return standardBlock;
-	}
-
-
-	public Texture getBouncingBlock() {
-		return bouncingBlock;
-	}
-
-	
-	public Texture getBigBouncingBlock(){
-		return bigBouncingBlock;
-	}
-	
-	
-	public Texture getDiamondBlock() {
-		return diamondBlock;
-	}
-	
-	public Texture getSuperDiamondBlock(){
-		return superDiamondBlock;
-	}
-	
-	public Texture getDynamiteBlock(){
-		return dynamiteBlock;
-	}
-	
-	public Texture getBigDynamiteBlock(){
-		return bigDynamiteBlock;
-	}
-	
-	public TextureAtlas getFishMovingLeft() {
-		return fishMovingLeft;
-	}
-
-
-	public TextureAtlas getFishMovingRight() {
-		return fishMovingRight;
-	}
-
-
-	public TextureAtlas getFishMovingUp() {
-		return fishMovingUp;
-	}
-
-
-	public TextureAtlas getFishMovingDown() {
-		return fishMovingDown;
-	}
-	
-	
-	public TextureAtlas getSharkLeft(){
-		return sharkLeft;
-	}
-	
-	
-	public TextureAtlas getSharkRight(){
-		return sharkRight;
-	}
-	
-	
-	public TextureAtlas getSharkUp(){
-		return sharkUp;
-	}
-	
-	
-	public TextureAtlas getSharkDown(){
-		return sharkDown;
-	}
-	
-	
-	public Texture getStarRed() {
-		return starRed;
-	}
-
-	public Texture getStarBlue() {
-		return starBlue;
-	}
-
-	public Texture getStarYellow() {
-		return starYellow;
-	}
-	
-	public Texture getStarGrey() {
-		return starGrey;
-	}
-	
-	public Texture getSquash() {
-		return squash;
-	}
-	
-	public TextureAtlas getExplosion(){
-		return explosion;
-	}
-	
-	public Texture getBubblesBackground(){
-		return bubblesBackground;
-	}
-	
-	public Texture getNewGameButton(){
-		return newGameButton;
 	}
 }

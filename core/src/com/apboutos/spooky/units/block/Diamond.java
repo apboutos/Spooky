@@ -4,11 +4,12 @@ import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.Movability;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import lombok.Setter;
 
 
 /**
@@ -27,26 +28,25 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public class Diamond extends Block{
 
+	@SuppressWarnings("unused")
 	public static int numberOfDiamondBlocks = 0; //Keeps track of how many diamond blocks exist in the level.
 	public static int numberOfSuperDiamondBlocks = 0; //Keeps track of how many super diamond blocks exist.
 	public static int numberOfDiamondsOnBase = 0; // Keeps track of how many super diamond blocks are stacked on the base.
-	
+
 	//If the above three variables are equal at any point during the level except when they are all 0, then the player
 	//must get an extra life.
 	//TODO implement the extra life feature when all diamond blocks are stacked.
 	
-	public Diamond(int x, int y, SpriteBatch batch, BlockType type, TextureLoader textureLoader){
+	public Diamond(int x, int y, SpriteBatch batch, BlockType type){
 		
 		super();
 		this.type = type; //Set the paren't block type.		
 		this.batch = batch;
-		this.textureLoader = textureLoader;
-		block = new Sprite(textureLoader.getDiamondBlock());
+		block = new Sprite(TextureLoader.diamondBlock);
+		deadBlock = new Animation<TextureRegion>(1/10f,TextureLoader.deadStandardBlock.getRegions());
 		bounds.set((float)x* GameDimensions.unitWidth,(float)y*GameDimensions.unitHeight, GameDimensions.unitWidth, GameDimensions.unitHeight);
 		block.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
-		
-		deadBlockAtlas = textureLoader.getDeadStandardBlock();
-	    deadBlock = new Animation(1/10f,deadBlockAtlas.getRegions());
+
 
 	    tmpBounds.setSize( GameDimensions.unitWidth, GameDimensions.unitHeight);
 	    numberOfSuperDiamondBlocks = 0;
@@ -64,11 +64,11 @@ public class Diamond extends Block{
 	public void update(){
 		
 		
-		if (iAmPushed == true)
+		if (iAmPushed)
 		{
 			Movability tmp = iAmEligibleToMove();
 			//If the diamond is super it must not move.
-			if ( tmp == Movability.eligible && iAmSuper == false)
+			if ( tmp == Movability.eligible && !iAmSuper)
 			{
 				iAmMoving = true;
 			}
@@ -76,48 +76,48 @@ public class Diamond extends Block{
 			{
 				iAmMoving = false;
 			}
-			else if (tmp == Movability.blockedByDiamond && iAmSuper == false)
+			else if (tmp == Movability.blockedByDiamond && !iAmSuper)
 			{
 				iAmMoving = true;
 			}
 			iAmPushed = false;
 		}
-		if( iHaveCollidedWithMap() == true && iAmMoving == true)
+		if( iHaveCollidedWithMap() && iAmMoving)
 		{
 			iAmMoving = false;
 		}
-		else if (iHaveCollidedWithBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithBlock() && iAmMoving)
 		{
-			if(iHaveCollidedWithDiamondBlock() == false)
+			if(!iHaveCollidedWithDiamondBlock())
 			{
 				iAmMoving = false;
 			}		
 		}
-		else if (iHaveCollidedWithMovingBlock() == true && iAmMoving == true && iAmSuper == false)
+		else if (iHaveCollidedWithMovingBlock() && iAmMoving && !iAmSuper)
 		{
 			bounce();				
 		}
 		//The following if statement will be true only once, when a diamond block that
 		//is not super stacks on top of another diamond block.
-		if(iAmOnTopOfaDiamond() == true && iAmSuper == false)
+		if(iAmOnTopOfaDiamond() && !iAmSuper)
 		{
 			iAmMoving = false;
 			iAmSuper = true;
-			block.setTexture(textureLoader.getSuperDiamondBlock());
+			block.setTexture(TextureLoader.superDiamondBlock);
 			numberOfSuperDiamondBlocks++;
 			boolean flag = true;
 			for (Block i: blockList)
 			{
-				if(i.isBase() == true)
+				if(i.isBase())
 				{
 					flag = false;
 				}
 			}
 			//Checks if a base diamond exists and if not sets this diamond as the base of stacking.
-			if (flag == true){
+			if (flag){
 				iAmBase = true;
 			}
-			if (iAmOnTopOfaBaseDiamond() == true)
+			if (iAmOnTopOfaBaseDiamond())
 			{
 				numberOfDiamondsOnBase++;
 			}
@@ -155,7 +155,7 @@ public class Diamond extends Block{
 		
 		for (Block i : blockList)
 		{
-			if (bounds.x == i.getBounds().x && bounds.y == i.getBounds().y && i.isBase() == true)
+			if (bounds.x == i.getBounds().x && bounds.y == i.getBounds().y && i.isBase())
 			{
 				return true;
 			}

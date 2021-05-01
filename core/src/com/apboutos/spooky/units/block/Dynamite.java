@@ -1,16 +1,16 @@
 package com.apboutos.spooky.units.block;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.utils.TimeUtils;
-
-import com.apboutos.spooky.effects.Explosion;
 import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.Movability;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.TimeUtils;
+
+import com.apboutos.spooky.effects.Explosion;
 
 /**
  * This class represents a dynamite block. A dynamite block is a special type of block
@@ -25,34 +25,28 @@ import com.apboutos.spooky.utilities.Movability;
  * @author Apostolis Boutos
  *
  */
+@SuppressWarnings("DuplicatedCode")
 public class Dynamite extends Block{
 
 	private boolean bang = false;
 
-	public Dynamite(int x, int y, SpriteBatch batch, BlockType type, TextureLoader textureLoader){
+	public Dynamite(int x, int y, SpriteBatch batch, BlockType type){
 		
 		super();
-		this.textureLoader = textureLoader;
 		this.type = type; //Set the paren't block type.		
 		this.batch = batch;
 
-		
-		if (type == BlockType.Dynamite)
-		{
-			block = new Sprite(textureLoader.getDynamiteBlock());
-			deadBlockAtlas = textureLoader.getDeadDynamiteBlock();
+		if(type == BlockType.Dynamite){
+			deadBlock = new Animation<TextureRegion>(1/10f, TextureLoader.deadDynamiteBlock.getRegions());
+			block = new Sprite(TextureLoader.dynamiteBlock);
 		}
-		else if (type == BlockType.BigDynamite)
-		{
-			block = new Sprite(textureLoader.getBigDynamiteBlock());
-			deadBlockAtlas = textureLoader.getDeadBigDynamiteBlock();
+		else {
+			deadBlock = new Animation<TextureRegion>(1/10f, TextureLoader.deadBigDynamiteBlock.getRegions());
+			block = new Sprite(TextureLoader.bigDynamiteBlock);
 		}
-		
-		bounds.set((float)x*GameDimensions.unitWidth,(float)y*GameDimensions.unitHeight, GameDimensions.unitWidth, GameDimensions.unitHeight);	
+
+		bounds.set((float)x* GameDimensions.unitWidth,(float)y*GameDimensions.unitHeight, GameDimensions.unitWidth, GameDimensions.unitHeight);
 		block.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
-		
-		
-	    deadBlock = new Animation(1/10f,deadBlockAtlas.getRegions(),PlayMode.LOOP);
 
 	    tmpBounds.setSize( GameDimensions.unitWidth, GameDimensions.unitHeight);
 		
@@ -68,7 +62,7 @@ public class Dynamite extends Block{
 	@ Override
 	public void update(){
 		
-		if (iAmPushed == true)
+		if (iAmPushed)
 		{
 			Movability tmp = iAmEligibleToMove();
 			if ( tmp == Movability.eligible )
@@ -82,17 +76,17 @@ public class Dynamite extends Block{
 			}
 			iAmPushed = false;
 		}
-		if( iHaveCollidedWithMap() == true && iAmMoving == true)
+		if( iHaveCollidedWithMap() && iAmMoving)
 		{
 			iAmMoving = false;
 			explode();
 		}
-		else if (iHaveCollidedWithBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithBlock() && iAmMoving)
 		{
 			iAmMoving = false;
 			explode();
 		}
-		else if (iHaveCollidedWithMovingBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithMovingBlock() && iAmMoving)
 		{
 			bounce();				
 		}
@@ -104,48 +98,48 @@ public class Dynamite extends Block{
 	
 	private void explode(){
 		
-		if (bang == false)
+		if (!bang)
 		{
 			if (type == BlockType.Dynamite)
 			{
-				explosionList.add(new Explosion(bounds.x,bounds.y,batch,textureLoader));   //Explosion at block.
-				explosionList.add(new Explosion(bounds.x-40,bounds.y,batch,textureLoader)); //Explosion at left side.
-				explosionList.add(new Explosion(bounds.x+40,bounds.y,batch,textureLoader)); //Explosion at right side.
-				explosionList.add(new Explosion(bounds.x,bounds.y+40,batch,textureLoader)); //Explosion at top side.
-				explosionList.add(new Explosion(bounds.x,bounds.y-40,batch,textureLoader)); //Explosion at bottom side.
-				explosionList.add(new Explosion(bounds.x-40,bounds.y+40,batch,textureLoader)); //Explosion at top left corner.
-				explosionList.add(new Explosion(bounds.x+40,bounds.y+40,batch,textureLoader)); //Explosion at top right corner.
-				explosionList.add(new Explosion(bounds.x-40,bounds.y-40,batch,textureLoader)); //Explosion at bottom left corner.
-				explosionList.add(new Explosion(bounds.x+40,bounds.y-40,batch,textureLoader)); //Explosion at bottom right corner.
+				explosionList.add(new Explosion(bounds.x,bounds.y,batch));   //Explosion at block.
+				explosionList.add(new Explosion(bounds.x-40,bounds.y,batch)); //Explosion at left side.
+				explosionList.add(new Explosion(bounds.x+40,bounds.y,batch)); //Explosion at right side.
+				explosionList.add(new Explosion(bounds.x,bounds.y+40,batch)); //Explosion at top side.
+				explosionList.add(new Explosion(bounds.x,bounds.y-40,batch)); //Explosion at bottom side.
+				explosionList.add(new Explosion(bounds.x-40,bounds.y+40,batch)); //Explosion at top left corner.
+				explosionList.add(new Explosion(bounds.x+40,bounds.y+40,batch)); //Explosion at top right corner.
+				explosionList.add(new Explosion(bounds.x-40,bounds.y-40,batch)); //Explosion at bottom left corner.
+				explosionList.add(new Explosion(bounds.x+40,bounds.y-40,batch)); //Explosion at bottom right corner.
 			}
 			else if (type == BlockType.BigDynamite)
 			{
-				explosionList.add(new Explosion(bounds.x,bounds.y,batch,textureLoader));   //Explosion at block.
-				explosionList.add(new Explosion(bounds.x-1,bounds.y,batch,textureLoader)); //Explosion at left side.
-				explosionList.add(new Explosion(bounds.x+1,bounds.y,batch,textureLoader)); //Explosion at right side.
-				explosionList.add(new Explosion(bounds.x,bounds.y+1,batch,textureLoader)); //Explosion at top side.
-				explosionList.add(new Explosion(bounds.x,bounds.y-1,batch,textureLoader)); //Explosion at bottom side.
-				explosionList.add(new Explosion(bounds.x-1,bounds.y+1,batch,textureLoader)); //Explosion at top left corner.
-				explosionList.add(new Explosion(bounds.x+1,bounds.y+1,batch,textureLoader)); //Explosion at top right corner.
-				explosionList.add(new Explosion(bounds.x-1,bounds.y-1,batch,textureLoader)); //Explosion at bottom left corner.
-				explosionList.add(new Explosion(bounds.x+1,bounds.y-1,batch,textureLoader)); //Explosion at bottom right corner.
+				explosionList.add(new Explosion(bounds.x,bounds.y,batch));   //Explosion at block.
+				explosionList.add(new Explosion(bounds.x-1,bounds.y,batch)); //Explosion at left side.
+				explosionList.add(new Explosion(bounds.x+1,bounds.y,batch)); //Explosion at right side.
+				explosionList.add(new Explosion(bounds.x,bounds.y+1,batch)); //Explosion at top side.
+				explosionList.add(new Explosion(bounds.x,bounds.y-1,batch)); //Explosion at bottom side.
+				explosionList.add(new Explosion(bounds.x-1,bounds.y+1,batch)); //Explosion at top left corner.
+				explosionList.add(new Explosion(bounds.x+1,bounds.y+1,batch)); //Explosion at top right corner.
+				explosionList.add(new Explosion(bounds.x-1,bounds.y-1,batch)); //Explosion at bottom left corner.
+				explosionList.add(new Explosion(bounds.x+1,bounds.y-1,batch)); //Explosion at bottom right corner.
 				//Outer ring of explosions.
 				//Left side.
-				explosionList.add(new Explosion(bounds.x-80,bounds.y+40,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x-80,bounds.y,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x-80,bounds.y-40,batch,textureLoader));
+				explosionList.add(new Explosion(bounds.x-80,bounds.y+40,batch));
+				explosionList.add(new Explosion(bounds.x-80,bounds.y,batch));
+				explosionList.add(new Explosion(bounds.x-80,bounds.y-40,batch));
 				//Right side.
-				explosionList.add(new Explosion(bounds.x+80,bounds.y+40,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x+80,bounds.y,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x+80,bounds.y-40,batch,textureLoader));
+				explosionList.add(new Explosion(bounds.x+80,bounds.y+40,batch));
+				explosionList.add(new Explosion(bounds.x+80,bounds.y,batch));
+				explosionList.add(new Explosion(bounds.x+80,bounds.y-40,batch));
 				//Top side.
-				explosionList.add(new Explosion(bounds.x-40,bounds.y+80,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x,bounds.y+80,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x+40,bounds.y+80,batch,textureLoader));
+				explosionList.add(new Explosion(bounds.x-40,bounds.y+80,batch));
+				explosionList.add(new Explosion(bounds.x,bounds.y+80,batch));
+				explosionList.add(new Explosion(bounds.x+40,bounds.y+80,batch));
 				//Bottom side.
-				explosionList.add(new Explosion(bounds.x-40,bounds.y-80,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x,bounds.y-80,batch,textureLoader));
-				explosionList.add(new Explosion(bounds.x+40,bounds.y-80,batch,textureLoader));
+				explosionList.add(new Explosion(bounds.x-40,bounds.y-80,batch));
+				explosionList.add(new Explosion(bounds.x,bounds.y-80,batch));
+				explosionList.add(new Explosion(bounds.x+40,bounds.y-80,batch));
 				
 			}
 		}	
@@ -161,12 +155,12 @@ public class Dynamite extends Block{
 	@ Override
 	public Block getDeadBlock()
 	{
-		if (iAmDead == true && TimeUtils.timeSinceMillis(deathtimer) > deadBlock.getAnimationDuration()*6000)
+		if (iAmDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*6000)
 		{
 			explode();
 			return this;
 		}
-		else if (bang == true)
+		else if (bang)
 		{
 			return this;
 		}

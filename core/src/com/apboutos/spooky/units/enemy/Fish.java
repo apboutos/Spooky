@@ -1,17 +1,14 @@
 package com.apboutos.spooky.units.enemy;
 
 import com.apboutos.spooky.level.TextureLoader;
+import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.EnemyType;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
-import com.apboutos.spooky.level.TextureLoader;
-import com.apboutos.spooky.utilities.BlockType;
-import com.apboutos.spooky.utilities.Direction;
-import com.apboutos.spooky.utilities.EnemyType;
 
 /**
  * 
@@ -21,24 +18,18 @@ import com.apboutos.spooky.utilities.EnemyType;
  * @author Apostolis Boutos
  *
  */
+@SuppressWarnings("DuplicatedCode")
 public class Fish extends Enemy{
 
-	public Fish(float x, float y, SpriteBatch batch, EnemyType enemyType, TextureLoader textureLoader) {
-		
-		
+	public Fish(float x, float y, SpriteBatch batch, EnemyType enemyType) {
 		super(x, y, batch, enemyType);
-		this.textureLoader = textureLoader;
-		atlasLeft = textureLoader.getFishMovingLeft();
-		atlasRight = textureLoader.getFishMovingRight();
-		atlasUp = textureLoader.getFishMovingUp();
-		atlasDown = textureLoader.getFishMovingDown();
-		
-		animationLeft  = new Animation(1/10f, atlasLeft.getRegions());
-		animationRight = new Animation(1/10f,atlasRight.getRegions());
-		animationUp    = new Animation(1/10f,atlasUp.getRegions());
-		animationDown  = new Animation(1/10f,atlasDown.getRegions());
-		
-		squash = new Sprite(textureLoader.getSquash());
+
+		animationUp = new Animation<TextureRegion>(1/10f, TextureLoader.fishMovingUp.getRegions());
+		animationDown = new Animation<TextureRegion>(1/10f, TextureLoader.fishMovingDown.getRegions());
+		animationLeft = new Animation<TextureRegion>(1/10f, TextureLoader.fishMovingLeft.getRegions());
+		animationRight = new Animation<TextureRegion>(1/10f, TextureLoader.fishMovingRight.getRegions());
+		squash = new Sprite(TextureLoader.squash);
+
 		speed  = new Vector2(3,3); 
 	}
 	
@@ -74,16 +65,16 @@ public class Fish extends Enemy{
 		{
 			plotNewCourse();
 		}
-		if (iHaveCollidedWithMap == true )
+		if (iHaveCollidedWithMap)
 		{
 			plotNewCourse();
 			iHaveCollidedWithMap = false;
 		}	
-		if(iHaveCollidedWithBlock == true)
+		if(iHaveCollidedWithBlock)
 		{	
-			if(tmpCollisionBlock.getBlockType() == BlockType.Standard && deathTimerStarted == false  && tmpCollisionBlock.isMoving() == false)
+			if(tmpCollisionBlock.getBlockType() == BlockType.Standard && !deathTimerStarted && !tmpCollisionBlock.isMoving())
 			{
-				if(tmpCollisionBlock.canMove(direction) == true) 
+				if(tmpCollisionBlock.canMove(direction))
 				{
 					tmpCollisionBlock.kill();
 				}
@@ -109,11 +100,11 @@ public class Fish extends Enemy{
 			if (b == 1)
 			{
 				tmpDirection = Direction.UP;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
@@ -121,11 +112,11 @@ public class Fish extends Enemy{
 			else
 			{
 				tmpDirection = Direction.DOWN;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.UP;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
@@ -137,11 +128,11 @@ public class Fish extends Enemy{
 			if (b == 1)
 			{
 				tmpDirection = Direction.UP;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
@@ -149,11 +140,11 @@ public class Fish extends Enemy{
 			else
 			{
 				tmpDirection = Direction.DOWN;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.UP;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.LEFT;
 				}
@@ -165,11 +156,11 @@ public class Fish extends Enemy{
 			if (b == 1)
 			{
 				tmpDirection = Direction.LEFT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
@@ -177,11 +168,11 @@ public class Fish extends Enemy{
 			else
 			{
 				tmpDirection = Direction.RIGHT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.LEFT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
@@ -193,11 +184,11 @@ public class Fish extends Enemy{
 			if (b == 1)
 			{
 				tmpDirection = Direction.LEFT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.UP;
 				}
@@ -205,11 +196,11 @@ public class Fish extends Enemy{
 			else
 			{
 				tmpDirection = Direction.RIGHT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.LEFT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}

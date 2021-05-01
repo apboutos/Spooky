@@ -1,15 +1,15 @@
 package com.apboutos.spooky.units;
 
 
-import com.apboutos.spooky.effects.Explosion;
 import com.apboutos.spooky.effects.SquashStar;
-import com.apboutos.spooky.level.Settings;
 import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.units.block.Block;
 import com.apboutos.spooky.units.enemy.Enemy;
 import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.StarColor;
+import com.apboutos.spooky.effects.Explosion;
+import com.apboutos.spooky.level.Settings;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,12 +17,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
+import lombok.Setter;
 
 import java.util.ArrayList;
 
@@ -36,42 +36,33 @@ import java.util.ArrayList;
  */
 
 
-public class Player {
+public class Player extends Unit{
 
-	private TextureLoader textureLoader;
-	
-	private TextureAtlas atlasleft;
-	private TextureAtlas atlasright;
-	private TextureAtlas atlasup;
-	private TextureAtlas atlasdown;
-	
-	private Animation<TextureRegion> spookyleft;
-	private Animation<TextureRegion> spookyright;
-	private Animation<TextureRegion> spookyup;
-	private Animation<TextureRegion> spookydown;
-	
+	@Setter
+	private Animation<TextureRegion> playerMovingLeft;
+	@Setter
+	private Animation<TextureRegion> playerMovingRight;
+	@Setter
+	private Animation<TextureRegion> playerMovingUp;
+	@Setter
+	private Animation<TextureRegion> playerMovingDown;
+	@Setter
 	private Sprite squash;
 	
-	private SpriteBatch batch; // The game's SpriteBatch.
-	private OrthographicCamera camera; // The game's camera.
+	private final SpriteBatch batch; // The game's SpriteBatch.
+	private final OrthographicCamera camera; // The game's camera.
 	
 	
-	private Rectangle bounds; //The palyer's position (x,y) and the sprites width and height.
-	private Rectangle tmpBounds; // Temporary Rectangle used for collision detection.
-	private Direction direction; // The direction the player is facing.
-	private Vector3 coords; //This Vector3 is used to store the coordinates of the player's touch event.
-	private Vector2 speed; // The speed of the player's fish.
+	private final Rectangle tmpBounds; // Temporary Rectangle used for collision detection.
+	private final Vector3 coords; //This Vector3 is used to store the coordinates of the player's touch event.
 	private float delta; // The time passed between frames, required for animations	.
 	private ArrayList<Block> blockList; // The array of Blocks from the LeveL, used in collision detection.
 	private ArrayList<Enemy> enemyList; // The array of Enemies from the Level, used in collision detection.
 	private ArrayList<SquashStar> squashList; // The array of SquashStars from the Level, used to create stars when player is dead.
 	private ArrayList<Explosion> explosionList;
-	private boolean iAmMoving; // Whether the player is moving or not.
-	private boolean iAmPushing; // Whether the player has issued a push command or not.
-	private boolean iAmDead; // Whether the player has been killed or not.
-	private Settings settings; // The game's settings.
-	private boolean deathTimerStarted = false; // Whether the death timer has started or not (default value false).
-	private long deathtimer; // The starting time of the death animation.
+
+	private final Settings settings; // The game's settings.
+
 	
 	
 	/**
@@ -83,21 +74,19 @@ public class Player {
 	 * @param camera The game's OrthographicCamera
 	 */
 	
-	public Player(float x,float y,SpriteBatch batch,OrthographicCamera camera,Settings settings,TextureLoader textureLoader){
-		
-		this.textureLoader = textureLoader;
-		atlasleft   = textureLoader.getPlayerMovingLeft();//new TextureAtlas(Gdx.files.internal("Images/Animations/Spooky/SpookyLeft.atlas"));
-		atlasright  = textureLoader.getPlayerMovingRight();//new TextureAtlas(Gdx.files.internal("Images/Animations/Spooky/SpookyRight.atlas"));
-		atlasup     = textureLoader.getPlayerMovingUp();//new TextureAtlas(Gdx.files.internal("Images/Animations/Spooky/SpookyUp.atlas"));
-		atlasdown   = textureLoader.getPlayerMovingDown();//new TextureAtlas(Gdx.files.internal("Images/Animations/Spooky/SpookyDown.atlas"));
-		spookyleft  = new Animation(1/10f, atlasleft.getRegions());
-		spookyright = new Animation(1/10f,atlasright.getRegions());
-		spookyup    = new Animation(1/10f,atlasup.getRegions());
-		spookydown  = new Animation(1/10f,atlasdown.getRegions());
-		bounds      = new Rectangle(); 
+	public Player(float x,float y,SpriteBatch batch,OrthographicCamera camera,Settings settings){
+
+		playerMovingUp = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingUp.getRegions());
+		playerMovingDown = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingDown.getRegions());
+		playerMovingLeft = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingLeft.getRegions());
+		playerMovingRight = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingRight.getRegions());
+
+		squash = new Sprite(TextureLoader.squash);
+
+		bounds      = new Rectangle();
 		tmpBounds   = new Rectangle();
 		
-		direction   = Direction.LEFT; 
+		direction   = Direction.LEFT;
 		this.batch  = batch;
 		this.camera = camera;
 		this.settings = settings;
@@ -108,10 +97,8 @@ public class Player {
 		tmpBounds.x = 0;
 		tmpBounds.y = 0;
 		tmpBounds.width  = GameDimensions.unitWidth;
-		tmpBounds.height = GameDimensions.unitWidth;
-		
-		squash = new Sprite(textureLoader.getSquash());
-		
+		tmpBounds.height = GameDimensions.unitHeight;
+
 		coords = new Vector3(); 
 		speed  = new Vector2(6,6); 
 		iAmPushing = false; 
@@ -145,14 +132,14 @@ public class Player {
 	 */
 	private void draw()
 	{
-		if (iAmDead == true)
+		if (iAmDead)
 		{
 			iAmMoving = false;
 			squash.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 			squash.draw(batch);
-			if (deathTimerStarted == false)
+			if (!deathTimerStarted)
 			{
-				deathtimer = TimeUtils.millis(); //Start the death timer
+				deathTimer = TimeUtils.millis(); //Start the death timer
 				deathTimerStarted = true;
 			}
 		}
@@ -160,14 +147,14 @@ public class Player {
 		{
 			if (direction == Direction.LEFT)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.x = bounds.x - speed.x;
-					batch.draw(spookyleft.getKeyFrame(delta, true),bounds.x,bounds.y);
+					batch.draw(playerMovingLeft.getKeyFrame(delta, true),bounds.x,bounds.y);
 				}
 				else
 				{
-					batch.draw(spookyleft.getKeyFrame(0),bounds.x,bounds.y);
+					batch.draw(playerMovingLeft.getKeyFrame(0),bounds.x,bounds.y);
 				}
 				if ((int)bounds.x%GameDimensions.unitWidth == 0)
 				{
@@ -176,14 +163,14 @@ public class Player {
 			}
 			if (direction == Direction.RIGHT)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.x = bounds.x + speed.x;
-					batch.draw(spookyright.getKeyFrame(delta, true),bounds.x,bounds.y);
+					batch.draw(playerMovingRight.getKeyFrame(delta, true),bounds.x,bounds.y);
 				}
 				else
 				{
-					batch.draw(spookyright.getKeyFrame(0),bounds.x,bounds.y);
+					batch.draw(playerMovingRight.getKeyFrame(0),bounds.x,bounds.y);
 				}
 				if ((int)bounds.x%GameDimensions.unitWidth == 0)
 				{
@@ -192,14 +179,14 @@ public class Player {
 			}
 			if (direction == Direction.DOWN)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.y = bounds.y - speed.y;
-					batch.draw(spookydown.getKeyFrame(delta, true),bounds.x,bounds.y);
+					batch.draw(playerMovingDown.getKeyFrame(delta, true),bounds.x,bounds.y);
 				}
 				else
 				{
-					batch.draw(spookydown.getKeyFrame(0),bounds.x,bounds.y);
+					batch.draw(playerMovingDown.getKeyFrame(0),bounds.x,bounds.y);
 				}
 				if ((int)bounds.y%GameDimensions.unitHeight == 0)
 				{
@@ -208,14 +195,14 @@ public class Player {
 			}
 			if (direction == Direction.UP)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.y = bounds.y + speed.y;
-					batch.draw(spookyup.getKeyFrame(delta, true),bounds.x,bounds.y);
+					batch.draw(playerMovingUp.getKeyFrame(delta, true),bounds.x,bounds.y);
 				}
 				else
 				{
-					batch.draw(spookyup.getKeyFrame(0),bounds.x,bounds.y);
+					batch.draw(playerMovingUp.getKeyFrame(0),bounds.x,bounds.y);
 				}
 				if ((int)bounds.y%GameDimensions.unitHeight == 0)
 				{
@@ -227,8 +214,6 @@ public class Player {
 	/**
 	 * Handles player's input
 	 * Keys handled:LEFT,RIGHT,UP,DOWN
-	 * 
-	 * @return Returns true if a handled key is being pressed
 	 */
 	
 	private void inputHandle(){
@@ -241,29 +226,29 @@ public class Player {
 			push();
 			//iAmPushing = true;
 		}
-		if (Gdx.input.isKeyPressed(Keys.UP) && settings.controls == 0 && iAmMoving == false)
+		if (Gdx.input.isKeyPressed(Keys.UP) && settings.controls == 0 && !iAmMoving)
 		{
 			iAmMoving = true;
 			direction = Direction.UP;
 		}
-		else if (Gdx.input.isKeyPressed(Keys.DOWN) && settings.controls == 0 && iAmMoving == false)
+		else if (Gdx.input.isKeyPressed(Keys.DOWN) && settings.controls == 0 && !iAmMoving)
 		{
 			iAmMoving = true;
 			direction = Direction.DOWN;
 		}
-		else if (Gdx.input.isKeyPressed(Keys.LEFT) && settings.controls == 0 && iAmMoving == false)
+		else if (Gdx.input.isKeyPressed(Keys.LEFT) && settings.controls == 0 && !iAmMoving)
 		{
 			iAmMoving = true;
 			direction = Direction.LEFT;
 		}
-		else if (Gdx.input.isKeyPressed(Keys.RIGHT) && settings.controls == 0 && iAmMoving == false)
+		else if (Gdx.input.isKeyPressed(Keys.RIGHT) && settings.controls == 0 && !iAmMoving)
 		{
 			iAmMoving = true;
 			direction = Direction.RIGHT;
 		}
-		else if (Gdx.input.isTouched() == true && settings.controls == 1) //TODO Remake button coordinates
+		else if (Gdx.input.isTouched() && settings.controls == 1) //TODO Remake button coordinates
 		{	
-			if (iAmMoving == false)
+			if (!iAmMoving)
 			{
 				iAmPushing = false;
 				if ( coords.x <= -168)
@@ -362,10 +347,10 @@ public class Player {
 		//Check if the player is colliding with an enemy.
 		for (Enemy i: enemyList)
 		{
-			if (bounds.overlaps(i.getBounds()) && i.isDead() == false && iAmDead == false)
+			if (bounds.overlaps(i.getBounds()) && !i.isDead() && !iAmDead)
 			{
 				iAmDead = true;
-				squashList.add(new SquashStar(bounds.x,bounds.y, StarColor.Yellow,batch,textureLoader));
+				squashList.add(new SquashStar(bounds.x,bounds.y, StarColor.Yellow,batch));
 				break;
 			}
 		}
@@ -373,10 +358,10 @@ public class Player {
 		//Check if the player is colliding with a moving block.
 		for (Block i: blockList)
 		{
-			if (bounds.overlaps(i.getBounds()) && iAmDead == false)
+			if (bounds.overlaps(i.getBounds()) && !iAmDead)
 			{
 				iAmDead = true;
-				squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Yellow,batch,textureLoader));
+				squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Yellow,batch));
 				break;
 			}
 		}
@@ -384,10 +369,10 @@ public class Player {
 		//Check if the player is colliding with an explosion.
 		for (Explosion i: explosionList)
 		{
-			if (bounds.overlaps(i.getBounds()) && iAmDead == false)
+			if (bounds.overlaps(i.getBounds()) && !iAmDead)
 			{
 				iAmDead = true;
-				squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Yellow,batch,textureLoader));
+				squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Yellow,batch));
 				break;
 			}
 		}
@@ -405,7 +390,7 @@ public class Player {
 		{
 			// If I don't have this if, the player will be able to push blocks
 			// that are already moving.
-			if(i.isMoving() == false)
+			if(!i.isMoving())
 			{
 				if (direction == Direction.UP)
 				{
@@ -449,33 +434,7 @@ public class Player {
 	 * Dispose any resources used.
 	 */
 	public void dispose(){
-		
-		textureLoader = null;
-		atlasleft = null;
-		atlasright = null;
-		atlasup = null;
-		atlasdown = null;
-		
-		spookyleft = null;
-		spookyright = null;
-		spookyup = null;
-		spookydown = null;
-		
-		squash = null;
-		batch = null;
-		camera = null;
-		
-		bounds = null;
-		tmpBounds = null;
-		direction = null;
-		coords = null;
-		speed = null;
-		
-		blockList = null;
-		enemyList = null;
-		squashList = null;
-		explosionList = null;
-		settings = null;
+
 	}
 	
 	/**
@@ -486,15 +445,7 @@ public class Player {
 	public Rectangle getBounds(){
 		return bounds;
 	}
-	
-	/**
-	 * Returns if the player has issued a push command or not
-	 * @return Boolean 
-	 */
-	public boolean getIsPushing(){
-		return iAmPushing;
-	}
-	
+
 	/**
 	 * Returns the player's facing direction
 	 * @return Direction 
@@ -537,14 +488,7 @@ public class Player {
 	 * @return boolean: true if the player has been killed, false otherwise.
 	 */
 	public boolean isDead(){
-		if (iAmDead == true && TimeUtils.timeSinceMillis(deathtimer) > 1500)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return iAmDead && TimeUtils.timeSinceMillis(deathTimer) > 1500;
 	}
 	
 	
@@ -557,19 +501,5 @@ public class Player {
 		this.squashList = squashList;
 	}
 	
-	
-	/**
-	 * Every unit needs access to the game's textureLoader in order to
-	 * have access to the textures it requires.
-	 * 
-	 * @param textureLoader The level's TextureLoader.
-	 */
-	public void setTextureLoader(TextureLoader textureLoader)
-	{
-		this.textureLoader = textureLoader;
-	}
-	
-	public void setDead(boolean isDead){
-		iAmDead = isDead;
-	}
+
 }

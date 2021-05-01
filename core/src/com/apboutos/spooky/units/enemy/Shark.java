@@ -7,8 +7,8 @@ import com.apboutos.spooky.utilities.EnemyType;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 
 
 /**
@@ -19,25 +19,20 @@ import com.badlogic.gdx.math.Vector2;
  * @author Apostolis Boutos
  *
  */
+@SuppressWarnings("DuplicatedCode")
 public class Shark extends Enemy{
 	
 
 
-	public Shark(float x, float y, SpriteBatch batch, EnemyType enemyType, TextureLoader textureLoader) {
-		
+	public Shark(float x, float y, SpriteBatch batch, EnemyType enemyType) {
 		super(x, y, batch, enemyType);
-		this.textureLoader = textureLoader;
-		atlasLeft = textureLoader.getSharkLeft();
-		atlasRight = textureLoader.getSharkRight();
-		atlasUp = textureLoader.getSharkUp();
-		atlasDown = textureLoader.getSharkDown();
-		
-		animationLeft  = new Animation(1/10f, atlasLeft.getRegions());
-		animationRight = new Animation(1/10f,atlasRight.getRegions());
-		animationUp    = new Animation(1/10f,atlasUp.getRegions());
-		animationDown  = new Animation(1/10f,atlasDown.getRegions());
-		
-		squash = new Sprite(textureLoader.getSquash());
+
+		animationUp = new Animation<TextureRegion>(1/10f, TextureLoader.sharkUp.getRegions());
+		animationDown = new Animation<TextureRegion>(1/10f, TextureLoader.sharkDown.getRegions());
+		animationLeft = new Animation<TextureRegion>(1/10f, TextureLoader.sharkLeft.getRegions());
+		animationRight = new Animation<TextureRegion>(1/10f, TextureLoader.sharkRight.getRegions());
+		squash = new Sprite(TextureLoader.squash);
+
 		speed  = new Vector2(6,6); 
 	}
 	
@@ -73,16 +68,16 @@ public class Shark extends Enemy{
 		{
 			//plotNewCourse();
 		}
-		if (iHaveCollidedWithMap == true )
+		if (iHaveCollidedWithMap)
 		{
 			plotNewCourse();
 			iHaveCollidedWithMap = false;
 		}	
-		if(iHaveCollidedWithBlock == true)
+		if(iHaveCollidedWithBlock)
 		{	
-			if(tmpCollisionBlock.getBlockType() == BlockType.Standard && deathTimerStarted == false  && tmpCollisionBlock.isMoving() == false)
+			if(tmpCollisionBlock.getBlockType() == BlockType.Standard && !deathTimerStarted && !tmpCollisionBlock.isMoving())
 			{
-				if(tmpCollisionBlock.canMove(direction) == true) 
+				if(tmpCollisionBlock.canMove(direction))
 				{
 					tmpCollisionBlock.push(direction);
 				}
@@ -110,11 +105,11 @@ private void plotNewCourse(){
 			if (b == 1)
 			{
 				tmpDirection = Direction.UP;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
@@ -122,11 +117,11 @@ private void plotNewCourse(){
 			else
 			{
 				tmpDirection = Direction.DOWN;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.UP;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
@@ -138,11 +133,11 @@ private void plotNewCourse(){
 			if (b == 1)
 			{
 				tmpDirection = Direction.UP;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
@@ -150,11 +145,11 @@ private void plotNewCourse(){
 			else
 			{
 				tmpDirection = Direction.DOWN;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.UP;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.LEFT;
 				}
@@ -166,11 +161,11 @@ private void plotNewCourse(){
 			if (b == 1)
 			{
 				tmpDirection = Direction.LEFT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
@@ -178,11 +173,11 @@ private void plotNewCourse(){
 			else
 			{
 				tmpDirection = Direction.RIGHT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.LEFT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}
@@ -194,11 +189,11 @@ private void plotNewCourse(){
 			if (b == 1)
 			{
 				tmpDirection = Direction.LEFT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.RIGHT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.UP;
 				}
@@ -206,11 +201,11 @@ private void plotNewCourse(){
 			else
 			{
 				tmpDirection = Direction.RIGHT;
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.LEFT;
 				}
-				if (this.canMove(tmpDirection) == false)
+				if (!this.canMove(tmpDirection))
 				{
 					tmpDirection = Direction.DOWN;
 				}

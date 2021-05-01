@@ -1,14 +1,15 @@
 package com.apboutos.spooky.utilities;
 
 import com.apboutos.spooky.boot.Spooky;
-import com.apboutos.spooky.units.Unit;
 import com.apboutos.spooky.units.block.Bouncing;
+import com.apboutos.spooky.units.Unit;
 import com.apboutos.spooky.units.block.Diamond;
 import com.apboutos.spooky.units.block.Dynamite;
 import com.apboutos.spooky.units.block.Standard;
 import com.apboutos.spooky.units.enemy.Fish;
 import com.apboutos.spooky.units.enemy.Shark;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,20 +19,28 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class to initialize the level from the internal level files.
+ */
 public class LevelInitializer {
 
     private static final String TAG = "LevelInitializer";
 
-
-
+    /**
+     * Returns a list containing the units of the level. The units are created by parsing the XML file
+     * of the specified level.
+     */
     @SuppressWarnings("ConstantConditions")
-    public static void initialize(int level , List<Unit> units , Spooky spooky)
+    public static List<Unit> initializeUnits(int level, Spooky spooky)
     {
+        List<Unit> units = new ArrayList<>();
         Document document = null;
+        FileHandle handle = Gdx.files.internal("Levels/Level " + level + ".xml");
         try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(Gdx.files.internal("Levels/Level " + level + ".xlm").path());
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse("C:\\Users\\exoph\\Documents\\Java Projects\\Spooky\\android\\assets\\Levels/Level " + level + ".xml");
         } catch (ParserConfigurationException | IOException | SAXException e) {
             Gdx.app.error(TAG,e.getMessage(),e);
         }
@@ -43,14 +52,18 @@ public class LevelInitializer {
                 Element element = (Element) node;
 
                 String x = element.getElementsByTagName("x").item(0).getTextContent();
-                String y = element.getElementsByTagName("y").item(1).getTextContent();
-                String type = element.getElementsByTagName("type").item(2).getTextContent();
+                String y = element.getElementsByTagName("y").item(0).getTextContent();
+                String type = element.getElementsByTagName("type").item(0).getTextContent();
 
                 units.add(createNewUnit(x,y,type, spooky));
             }
         }
+        return units;
     }
 
+    /**
+     * Creates a new Unit from the given parameters.
+     */
     private static Unit createNewUnit(String x, String y, String type, Spooky spooky){
 
         switch (type){

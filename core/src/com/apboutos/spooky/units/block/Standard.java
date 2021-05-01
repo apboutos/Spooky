@@ -1,14 +1,13 @@
 package com.apboutos.spooky.units.block;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-
 import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.Movability;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 
 /**
@@ -18,21 +17,21 @@ import com.apboutos.spooky.utilities.Movability;
  * @author exophrenik
  *
  */
+@SuppressWarnings("DuplicatedCode")
 public class Standard extends Block{
 
 	
-	public Standard(int x, int y, SpriteBatch batch, BlockType type, TextureLoader textureLoader) {
+	public Standard(int x, int y, SpriteBatch batch, BlockType type) {
 		
 		super();
 		this.type = type; //Set the paren't block type.		
 		this.batch = batch;
-		
-		block = new Sprite(textureLoader.getStandardBlock());
-		bounds.set((float)x*GameDimensions.unitWidth,(float)y*GameDimensions.unitHeight, GameDimensions.unitWidth, GameDimensions.unitHeight);		
+
+		deadBlock = new Animation<TextureRegion>(1/10f, TextureLoader.deadStandardBlock.getRegions());
+		block = new Sprite(TextureLoader.standardBlock);
+
+		bounds.set((float)x* GameDimensions.unitWidth,(float)y*GameDimensions.unitHeight, GameDimensions.unitWidth, GameDimensions.unitHeight);
 		block.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
-		
-		deadBlockAtlas = textureLoader.getDeadStandardBlock();
-	    deadBlock = new Animation(1/10f,deadBlockAtlas.getRegions());
 
 	    tmpBounds.setSize( GameDimensions.unitWidth, GameDimensions.unitHeight);
 		
@@ -48,17 +47,12 @@ public class Standard extends Block{
 	@ Override
 	public void update(){
 		
-		if (iAmPushed == true)
+		if (iAmPushed)
 		{
 			Movability tmp = iAmEligibleToMove();
 			if ( tmp == Movability.eligible )
 			{
 				iAmMoving = true;
-			}
-			else if (tmp == Movability.notPushed)
-			{
-				
-				
 			}
 			else if (tmp == Movability.blocked || tmp == Movability.blockedByDiamond)
 			{
@@ -67,15 +61,15 @@ public class Standard extends Block{
 			}
 			iAmPushed = false;
 		}
-		if( iHaveCollidedWithMap() == true && iAmMoving == true)
+		if( iHaveCollidedWithMap() && iAmMoving)
 		{
 			iAmMoving = false;
 		}
-		else if (iHaveCollidedWithBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithBlock() && iAmMoving)
 		{
 			iAmMoving = false;
 		}
-		else if (iHaveCollidedWithMovingBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithMovingBlock() && iAmMoving)
 		{
 			bounce();				
 		}

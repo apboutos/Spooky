@@ -1,9 +1,8 @@
 package com.apboutos.spooky.level;
 
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import com.apboutos.spooky.utilities.PlayerInfo;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Interface {
 	

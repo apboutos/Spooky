@@ -1,5 +1,6 @@
 package com.apboutos.spooky.effects;
 
+import com.apboutos.spooky.level.TextureLoader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -8,13 +9,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.apboutos.spooky.level.TextureLoader;
 
 public class Explosion {
 
 	private Rectangle bounds;
 	private Animation<TextureRegion> explosion;
-	private TextureAtlas explosionAtlas;
 	private SpriteBatch batch;
 	private long deathTimer = 1000;
 	private boolean deathTimerStarted = false;
@@ -22,13 +21,12 @@ public class Explosion {
 	private boolean iAmDead = false;
 	
 	
-	public Explosion(float x, float y, SpriteBatch batch, TextureLoader textureLoader){
+	public Explosion(float x, float y, SpriteBatch batch){
 
 		System.out.println( "x = " + x + " y = " + y);
 		this.batch = batch;
 		bounds = new Rectangle();
-		explosionAtlas = textureLoader.getExplosion();
-		explosion = new Animation(1/10f,explosionAtlas.getRegions(),PlayMode.LOOP);
+		explosion = new Animation<TextureRegion>(1/10f, TextureLoader.explosion.getRegions(),PlayMode.LOOP);
 		
 		bounds.set(x , y, 40 , 40);
 
@@ -74,7 +72,6 @@ public class Explosion {
 		
 		bounds = null;
 		explosion = null;
-		explosionAtlas = null;
 		batch = null;
 	}
 	

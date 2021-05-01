@@ -1,14 +1,13 @@
 package com.apboutos.spooky.units.block;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.Movability;
-
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 
 /**
@@ -20,6 +19,7 @@ import com.apboutos.spooky.utilities.Movability;
  * @author Apostolis Boutos
  *
  */
+@SuppressWarnings("DuplicatedCode")
 public class Bouncing extends Block{
 	
 	private int currentBounces;
@@ -27,14 +27,8 @@ public class Bouncing extends Block{
 	
 	/**
 	 * Constructor that initializes the object.
-	 * 
-	 * @param x 
-	 * @param y
-	 * @param batch
-	 * @param type
-	 * @param textureLoader
 	 */
-	public Bouncing(int x, int y, SpriteBatch batch, BlockType type, TextureLoader textureLoader){
+	public Bouncing(int x, int y, SpriteBatch batch, BlockType type){
 		
 		super();
 		this.type = type; //Set the paren't block type.
@@ -42,23 +36,21 @@ public class Bouncing extends Block{
 		
 		if(type == BlockType.Bouncing)
 		{
-			block = new Sprite(textureLoader.getBouncingBlock());
-			deadBlockAtlas = textureLoader.getDeadBouncingBlock();
+			deadBlock = new Animation<TextureRegion>(1/10f, TextureLoader.deadBouncingBlock.getRegions());
+			block = new Sprite(TextureLoader.bouncingBlock);
 			currentBounces = 0;
 			maxBounces = 1;
 		}
 		else if (type == BlockType.BigBouncing)
 		{
-			block = new Sprite(textureLoader.getBigBouncingBlock());
-			deadBlockAtlas = textureLoader.getDeadBigBouncingBlock();
+			deadBlock = new Animation<TextureRegion>(1/10f, TextureLoader.deadBigBouncingBlock.getRegions());
+			block = new Sprite(TextureLoader.bigBouncingBlock);
 			currentBounces = 0;
 			maxBounces = 2;
 		}
 		
 		bounds.set((float)x*GameDimensions.unitWidth,(float)y*GameDimensions.unitHeight, GameDimensions.unitWidth, GameDimensions.unitHeight);		
 		block.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
-		
-	    deadBlock = new Animation(1/10f,deadBlockAtlas.getRegions());
 
 	    tmpBounds.setSize( GameDimensions.unitWidth, GameDimensions.unitHeight);
 		
@@ -75,17 +67,12 @@ public class Bouncing extends Block{
 	@ Override
 	public void update(){
 				
-		if (iAmPushed == true && iAmMoving == false)
+		if (iAmPushed && !iAmMoving)
 		{
 			Movability tmp = iAmEligibleToMove();
 			if ( tmp == Movability.eligible )
 			{
 				iAmMoving = true;
-			}
-			else if (tmp == Movability.notPushed)
-			{
-				
-				
 			}
 			else if (tmp == Movability.blocked || tmp == Movability.blockedByDiamond)
 			{
@@ -94,7 +81,7 @@ public class Bouncing extends Block{
 			}
 			iAmPushed = false;
 		}
-		if( iHaveCollidedWithMap() == true && iAmMoving == true)
+		if( iHaveCollidedWithMap() && iAmMoving)
 		{
 			if(currentBounces == maxBounces)
 			{
@@ -108,7 +95,7 @@ public class Bouncing extends Block{
 			}
 			
 		}
-		else if (iHaveCollidedWithBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithBlock() && iAmMoving)
 		{
 			if(currentBounces == maxBounces)
 			{
@@ -121,7 +108,7 @@ public class Bouncing extends Block{
 				bounce();
 			}
 		}
-		else if (iHaveCollidedWithMovingBlock() == true && iAmMoving == true)
+		else if (iHaveCollidedWithMovingBlock() && iAmMoving)
 		{
 			bounce();
 		}

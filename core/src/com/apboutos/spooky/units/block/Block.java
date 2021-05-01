@@ -1,24 +1,22 @@
 package com.apboutos.spooky.units.block;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
-
 import com.apboutos.spooky.effects.Explosion;
-import com.apboutos.spooky.level.TextureLoader;
+import com.apboutos.spooky.units.Unit;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.Movability;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
+import lombok.Setter;
+
+import java.util.ArrayList;
 
 /**
  * 
@@ -29,32 +27,25 @@ import com.apboutos.spooky.utilities.Movability;
  * @author Apostolis Boutos
  *
  */
-public class Block {
 
-	protected TextureAtlas deadBlockAtlas; // The block's death animation textures
+@SuppressWarnings("DuplicatedCode")
+public class Block extends Unit {
+
+	@Setter
 	protected Animation<TextureRegion> deadBlock; // The block's death animation
+	@Setter
 	protected Sprite block; // The block's sprite
 	protected SpriteBatch batch; // The game's SpriteBatch
-	protected Rectangle bounds; // The block's sprite boundaries (x,y coordinate, sprites width and height)
-	protected Direction myDirection; // The block's  facing direction
-	
-	protected boolean iAmPushed; // Whether the block is the one pushed by the player
-	protected boolean iAmMoving; // Whether the block is moving or not
-	protected boolean iAmDead; // Whether the block should be destroyed or not
-	
+
 	protected ArrayList<Block> blockList; // The array where all block of the same level are stored
 	protected ArrayList<Explosion> explosionList; //The array where all the dynamite explosion animations are stored.
 
-	protected Vector2 speed; // The blocks moving speed
 	protected Rectangle tmpBounds; // Used for collision detection
-	
-	protected long deathtimer; // The starting time of the death animation
-	protected boolean deathTimerStarted;
+
 	protected float delta = 0; // The time between frames, used for animations
 	protected BlockType type; // The block's type.
 	
 	protected Block tmpBlock;
-	protected TextureLoader textureLoader;
 	protected boolean iAmSuper;
 	protected boolean iAmBase;
 	
@@ -70,7 +61,7 @@ public class Block {
 		iAmDead   = false;
 		iAmPushed = false;
 	    deathTimerStarted = false;
-	    deathtimer = 0;
+	    deathTimer = 0;
 		bounds = new Rectangle();
 		speed  = new Vector2();
 		speed.x = 6;
@@ -98,7 +89,7 @@ public class Block {
 	
 	public void push(Direction direction){
 		
-		myDirection = direction;
+		this.direction = direction;
 		iAmPushed = true;
 		
 	}
@@ -116,11 +107,11 @@ public class Block {
 			   instead. 
 			*/
 			
-			if (iAmMoving == false && iAmPushed == true)
+			if (!iAmMoving && iAmPushed)
 			{
 				
 				//Checks if the pushed block can't move due to being near a wall.
-				if (myDirection == Direction.LEFT)
+				if (direction == Direction.LEFT)
 				{
 					tmpBounds.setPosition(bounds.x - speed.x, bounds.y);
 					if(tmpBounds.x < GameDimensions.xAxisMinumum*GameDimensions.unitWidth)
@@ -128,7 +119,7 @@ public class Block {
 						return Movability.blocked;
 					}
 				}
-				else if (myDirection == Direction.RIGHT)
+				else if (direction == Direction.RIGHT)
 				{
 					tmpBounds.setPosition(bounds.x + speed.x, bounds.y);
 					if(tmpBounds.x + tmpBounds.width > GameDimensions.xAxisMaximum*GameDimensions.unitWidth)
@@ -136,7 +127,7 @@ public class Block {
 						return Movability.blocked;
 					}
 				}
-				else if (myDirection == Direction.UP)
+				else if (direction == Direction.UP)
 				{
 					tmpBounds.setPosition(bounds.x, bounds.y + speed.y);
 					if(tmpBounds.y + tmpBounds.height > GameDimensions.yAxisMaximum * GameDimensions.unitHeight)
@@ -144,7 +135,7 @@ public class Block {
 						return Movability.blocked;
 					}
 				}
-				else if (myDirection == Direction.DOWN)
+				else if (direction == Direction.DOWN)
 				{
 					tmpBounds.setPosition(bounds.x, bounds.y - speed.y);
 					if(tmpBounds.y < GameDimensions.yAxisMinimum * GameDimensions.unitHeight)
@@ -156,7 +147,7 @@ public class Block {
 	
 				for (Block i : blockList)
 				{
-					if (myDirection == Direction.UP && i!=this)
+					if (direction == Direction.UP && i!=this)
 					{
 						tmpBounds.setPosition(bounds.x, bounds.y + 1);
 						if (tmpBounds.overlaps(i.bounds))
@@ -171,7 +162,7 @@ public class Block {
 							}
 						}					
 					}
-					else if (myDirection == Direction.DOWN && i!=this)
+					else if (direction == Direction.DOWN && i!=this)
 					{
 						tmpBounds.setPosition(bounds.x, bounds.y - 1);
 						if (tmpBounds.overlaps(i.bounds))
@@ -186,7 +177,7 @@ public class Block {
 							}
 						}					
 					}
-					else if (myDirection == Direction.LEFT && i!=this)
+					else if (direction == Direction.LEFT && i!=this)
 					{
 						tmpBounds.setPosition(bounds.x - 1, bounds.y);
 						if (tmpBounds.overlaps(i.bounds))
@@ -201,7 +192,7 @@ public class Block {
 							}
 						}					
 					}	
-					else if (myDirection == Direction.RIGHT && i!=this)
+					else if (direction == Direction.RIGHT && i!=this)
 					{
 						tmpBounds.setPosition(bounds.x + 1, bounds.y);
 						if (tmpBounds.overlaps(i.bounds))
@@ -219,7 +210,7 @@ public class Block {
 				}
 				
 			}
-			if (iAmPushed == true)
+			if (iAmPushed)
 			{
 				
 				return Movability.eligible;
@@ -242,33 +233,21 @@ public class Block {
 		
 		tmpBounds.setPosition(bounds.x, bounds.y);
 		// Checking if block collides with the map borders
-		if (myDirection == Direction.LEFT)
+		if (direction == Direction.LEFT)
 		{
-			if(tmpBounds.x - 4 < GameDimensions.xAxisMinumum * GameDimensions.unitWidth)
-			{
-				return true;
-			}		
+			return tmpBounds.x - 4 < GameDimensions.xAxisMinumum * GameDimensions.unitWidth;
 		}
-		else if (myDirection == Direction.RIGHT)
+		else if (direction == Direction.RIGHT)
 		{
-			if(tmpBounds.x + tmpBounds.width + 4 > GameDimensions.xAxisMaximum*GameDimensions.unitWidth)
-			{
-				return true;
-			}
+			return tmpBounds.x + tmpBounds.width + 4 > GameDimensions.xAxisMaximum * GameDimensions.unitWidth;
 		}
-		else if (myDirection == Direction.UP)
+		else if (direction == Direction.UP)
 		{
-			if(tmpBounds.y + tmpBounds.height + 4 > GameDimensions.yAxisMaximum * GameDimensions.unitHeight)
-			{
-				return true;
-			}
+			return tmpBounds.y + tmpBounds.height + 4 > GameDimensions.yAxisMaximum * GameDimensions.unitHeight;
 		}
-		else if (myDirection == Direction.DOWN)
+		else if (direction == Direction.DOWN)
 		{
-			if(tmpBounds.y - 4 < GameDimensions.yAxisMinimum * GameDimensions.unitHeight)
-			{
-				return true;
-			}
+			return tmpBounds.y - 4 < GameDimensions.yAxisMinimum * GameDimensions.unitHeight;
 		}
 		return false;
 	}
@@ -282,19 +261,19 @@ public class Block {
 	 */
 	protected boolean iHaveCollidedWithBlock(){
 		//Checking if block collides with other blocks.
-		if (myDirection == Direction.UP)
+		if (direction == Direction.UP)
 		{
 			tmpBounds.setPosition(bounds.x, bounds.y + speed.y);
 		}
-		else if (myDirection == Direction.DOWN)
+		else if (direction == Direction.DOWN)
 		{
 			tmpBounds.setPosition(bounds.x, bounds.y - speed.y);
 		}
-		else if (myDirection == Direction.LEFT)
+		else if (direction == Direction.LEFT)
 		{
 			tmpBounds.setPosition(bounds.x - speed.x, bounds.y);
 		}
-		else if (myDirection == Direction.RIGHT)
+		else if (direction == Direction.RIGHT)
 		{
 			tmpBounds.setPosition(bounds.x + speed.x, bounds.y);
 		}
@@ -302,7 +281,7 @@ public class Block {
 		{
 			if (i != this)
 			{
-			    if (tmpBounds.overlaps(i.bounds) && (i.isMoving() == false))
+			    if (tmpBounds.overlaps(i.bounds) && (!i.isMoving()))
 				{
 					return true;					
 				}
@@ -320,19 +299,19 @@ public class Block {
 	 */
 	protected boolean iHaveCollidedWithMovingBlock(){
 		
-		if (myDirection == Direction.UP)
+		if (direction == Direction.UP)
 		{
 			tmpBounds.setPosition(bounds.x, bounds.y + 2*speed.y);
 		}
-		else if (myDirection == Direction.DOWN)
+		else if (direction == Direction.DOWN)
 		{
 			tmpBounds.setPosition(bounds.x, bounds.y - 2*speed.y);
 		}
-		else if (myDirection == Direction.LEFT)
+		else if (direction == Direction.LEFT)
 		{
 			tmpBounds.setPosition(bounds.x - 2*speed.x, bounds.y);
 		}
-		else if (myDirection == Direction.RIGHT)
+		else if (direction == Direction.RIGHT)
 		{
 			tmpBounds.setPosition(bounds.x + 2*speed.x, bounds.y);
 		}
@@ -340,7 +319,7 @@ public class Block {
 		{
 			if (i != this)
 			{
-			    if (tmpBounds.overlaps(i.bounds) && (i.isMoving() == true))
+			    if (tmpBounds.overlaps(i.bounds) && (i.isMoving()))
 				{
 			    	tmpBlock = i;
 					return true;		
@@ -358,19 +337,19 @@ public class Block {
 	 */
 	protected boolean iHaveCollidedWithDiamondBlock(){
 		
-		if (myDirection == Direction.UP)
+		if (direction == Direction.UP)
 		{
 			tmpBounds.setPosition(bounds.x, bounds.y + speed.y);
 		}
-		else if (myDirection == Direction.DOWN)
+		else if (direction == Direction.DOWN)
 		{
 			tmpBounds.setPosition(bounds.x, bounds.y - speed.y);
 		}
-		else if (myDirection == Direction.LEFT)
+		else if (direction == Direction.LEFT)
 		{
 			tmpBounds.setPosition(bounds.x - speed.x, bounds.y);
 		}
-		else if (myDirection == Direction.RIGHT)
+		else if (direction == Direction.RIGHT)
 		{
 			tmpBounds.setPosition(bounds.x + speed.x, bounds.y);
 		}
@@ -393,8 +372,7 @@ public class Block {
 	
 	/**
 	 * Determines if the block can move towards the specified direction.
-	 * 
-	 * @param
+	 *
 	 * @return True if the block is free to move and false otherwise.
 	 */
 	public boolean canMove(Direction direction){
@@ -443,7 +421,7 @@ public class Block {
 		{
 			if (i!=this)
 			{
-				if(i.getBounds().overlaps(tmpBounds) == true)
+				if(i.getBounds().overlaps(tmpBounds))
 				{
 					return false;
 				}
@@ -461,21 +439,21 @@ public class Block {
 	 *  speed.
 	 */
 	protected void moving(){
-		if (iAmMoving == true && iAmDead == false)
+		if (iAmMoving && !iAmDead)
 		{
-			if (myDirection == Direction.UP)
+			if (direction == Direction.UP)
 			{
 				bounds.y = bounds.y + speed.y;
 			}
-			else if (myDirection == Direction.DOWN)
+			else if (direction == Direction.DOWN)
 			{
 				bounds.y = bounds.y - speed.y;
 			}
-			else if (myDirection == Direction.LEFT)
+			else if (direction == Direction.LEFT)
 			{
 				bounds.x = bounds.x - speed.x;
 			}
-			else if (myDirection == Direction.RIGHT)
+			else if (direction == Direction.RIGHT)
 			{
 				bounds.x = bounds.x + speed.x;
 			}			
@@ -490,13 +468,13 @@ public class Block {
 	 */
 	protected void draw(){
 		block.setPosition(bounds.x, bounds.y);
-		if (iAmDead == true)
+		if (iAmDead)
 		{
 			delta += Gdx.graphics.getDeltaTime();
 			batch.draw(deadBlock.getKeyFrame(delta),bounds.x,bounds.y);
-			if (deathTimerStarted == false)
+			if (!deathTimerStarted)
 			{
-				deathtimer = TimeUtils.millis(); //Start the death timer
+				deathTimer = TimeUtils.millis(); //Start the death timer
 				deathTimerStarted = true;
 			}
 		}
@@ -512,21 +490,21 @@ public class Block {
 	 */
 	protected void bounce(){
 		
-		switch (myDirection)
+		switch (direction)
 		{
-			case    UP: myDirection = Direction.DOWN;  break;
-			case  DOWN: myDirection = Direction.UP;    break;
-			case  LEFT: myDirection = Direction.RIGHT;  break;
-			case RIGHT: myDirection = Direction.LEFT; break;
+			case    UP: direction = Direction.DOWN;  break;
+			case  DOWN: direction = Direction.UP;    break;
+			case  LEFT: direction = Direction.RIGHT;  break;
+			case RIGHT: direction = Direction.LEFT; break;
 		}
 		if(tmpBlock != null)
 		{
-			switch (tmpBlock.myDirection)
+			switch (tmpBlock.direction)
 			{
-				case    UP: tmpBlock.myDirection = Direction.DOWN;  break;
-				case  DOWN: tmpBlock.myDirection = Direction.UP;    break;
-				case  LEFT: tmpBlock.myDirection = Direction.RIGHT;  break;
-				case RIGHT: tmpBlock.myDirection = Direction.LEFT; break;
+				case    UP: tmpBlock.direction = Direction.DOWN;  break;
+				case  DOWN: tmpBlock.direction = Direction.UP;    break;
+				case  LEFT: tmpBlock.direction = Direction.RIGHT;  break;
+				case RIGHT: tmpBlock.direction = Direction.LEFT; break;
 			}
 		}
 			
@@ -539,11 +517,10 @@ public class Block {
 
 	public void dispose(){	
 		block = null;
-		deadBlockAtlas = null;
 		//deadBlock = null; //Causes a null pointer exception if enabled.
 		batch = null;
 		bounds = null;
-		myDirection = null;
+		direction = null;
 		blockList = null;
 		speed = null;
 		tmpBounds = null;
@@ -578,7 +555,6 @@ public class Block {
 	 * Sets the block's explosion list. Each dynamite block must have
 	 * this list in order to be able to create explosion animations when
 	 * it explodes.
-	 * @param explosionList
 	 */
 	public void setExplosionList(ArrayList<Explosion> explosionList){
 		this.explosionList = explosionList;
@@ -592,7 +568,7 @@ public class Block {
 	 */
 	public Block getDeadBlock()
 	{
-		if (iAmDead == true && TimeUtils.timeSinceMillis(deathtimer) > deadBlock.getAnimationDuration()*1000)
+		if (iAmDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*1000)
 		{
 			return this;
 		}
@@ -628,21 +604,9 @@ public class Block {
 	 */
 	public Direction getDirection()
 	{
-		return myDirection;
+		return direction;
 	}
-	
-	void setDirection(Direction direction){
-		myDirection = direction;
-	}
-		
-	/**
-	 * Returns true if the current block is a super diamond block.
-	 * @return boolean
-	 */
-	public boolean isSuperDiamond(){
-		return iAmSuper;
-	}
-	
+
 	
 	/**
 	 * Returns true if the current block is the base of diamond stacking.
@@ -651,12 +615,5 @@ public class Block {
 	public boolean isBase(){
 		return iAmBase;
 	}
-	
-	/**
-	 * Set true to transform this diamond block to a super diamond block.
-	 */
-	public void setSuperDiamond(boolean iAmSuper)
-	{
-		this.iAmSuper = iAmSuper;
-	}
+
 }

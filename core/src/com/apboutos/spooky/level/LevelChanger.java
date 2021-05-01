@@ -1,7 +1,7 @@
 package com.apboutos.spooky.level;
 
-import com.badlogic.gdx.Screen;
 import com.apboutos.spooky.boot.Spooky;
+import com.badlogic.gdx.Screen;
 
 
 /**

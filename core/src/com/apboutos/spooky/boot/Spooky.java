@@ -31,6 +31,7 @@ public class Spooky extends Game {
 		level = new Level(this);
 		settingsScreen = new SettingsScreen(batch,camera);
 		setScreen(mainmenu);
+
 	}
 
 	@Override

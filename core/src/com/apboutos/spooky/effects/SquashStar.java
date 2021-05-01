@@ -2,9 +2,11 @@ package com.apboutos.spooky.effects;
 
 import java.util.Random;
 
+import com.apboutos.spooky.level.TextureLoader;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.StarColor;
 
@@ -45,7 +47,7 @@ public class SquashStar {
 	 * @param color The color of the stars.
 	 * @param batch The standard SpriteBatch.
 	 */
-	public SquashStar(float originX, float originY, StarColor color, SpriteBatch batch,TextureLoader textureLoader){
+	public SquashStar(float originX, float originY, StarColor color, SpriteBatch batch){
 		
 		this.batch = batch;
 		this.originX = originX;
@@ -96,25 +98,26 @@ public class SquashStar {
 		
 		// Load the proper star texture according to it's color.
 		// TODO Need to add different color textures.
+		// TODO Need to add textures from texture loader.
 		if (color == StarColor.Blue)
 		{
-			star = new Sprite(textureLoader.getStarBlue());
+			star = new Sprite(TextureLoader.starBlue);
 		}
 		else if (color == StarColor.Green)
 		{
-			star = new Sprite(textureLoader.getStarBlue());
+			star = new Sprite(TextureLoader.starGreen);
 		}
 		else if (color == StarColor.Grey)
 		{
-			star = new Sprite(textureLoader.getStarGrey());
+			star = new Sprite(TextureLoader.starGrey);
 		}
 		else if (color == StarColor.Red)
 		{
-			star = new Sprite(textureLoader.getStarRed());
+			star = new Sprite(TextureLoader.starRed);
 		}
 		else if (color == StarColor.Yellow)
 		{
-			star = new Sprite(textureLoader.getStarYellow());
+			star = new Sprite(TextureLoader.starYellow);
 		}
 	}
 	
@@ -249,7 +252,6 @@ public class SquashStar {
 	 * Disposes any textures that are loaded.
 	 */
 	public void dispose(){
-		//star.getTexture().dispose();
 		star = null;
 		batch = null;
 		randomGenerator = null;

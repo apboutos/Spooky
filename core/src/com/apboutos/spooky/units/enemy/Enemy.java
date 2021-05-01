@@ -1,63 +1,49 @@
 package com.apboutos.spooky.units.enemy;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
-
-import com.apboutos.spooky.effects.Explosion;
 import com.apboutos.spooky.effects.SquashStar;
-import com.apboutos.spooky.level.TextureLoader;
+import com.apboutos.spooky.effects.Explosion;
+import com.apboutos.spooky.units.Unit;
 import com.apboutos.spooky.units.block.Block;
 import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.EnemyType;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.StarColor;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.TimeUtils;
+import lombok.Setter;
+
+import java.util.ArrayList;
 
 /**
  * Represents an enemy.
- * @author 
+ * @author Apostolos Boutos
  *
  */
-public class Enemy {
+@SuppressWarnings("DuplicatedCode")
+public class Enemy extends Unit {
 
-	protected TextureLoader textureLoader;
-	protected TextureAtlas atlasLeft;
-	protected TextureAtlas atlasRight;
-	protected TextureAtlas atlasUp;
-	protected TextureAtlas atlasDown;
-	
+	@Setter
 	protected Animation<TextureRegion> animationLeft;
+	@Setter
 	protected Animation<TextureRegion> animationRight;
+	@Setter
 	protected Animation<TextureRegion> animationUp;
+	@Setter
 	protected Animation<TextureRegion> animationDown;
-	
+	@Setter
 	protected Sprite squash;
 	
 	protected SpriteBatch batch;
-	
-	protected Rectangle bounds;
+
 	protected Rectangle tmpBounds;
-	protected Direction direction;
-	protected Vector2 speed;
 	protected float delta;
 	protected ArrayList<Block> blockList;
 	protected ArrayList<SquashStar> squashList;
 	protected ArrayList<Explosion> explosionList;
-	protected boolean iAmMoving; // Whether this unit is moving or not
-	protected boolean iAmPushing; // Whether this unit has issued a push command or not
-	protected boolean iAmDead; // Whether this unit has been killed or not
 	protected EnemyType enemyType;
-	protected int numberOfBlocksMoved = 0;
-	protected boolean deathTimerStarted = false; // Whether the death timer has started or not (default value false);
-	protected long deathtimer; // The starting time of the death animation
+	protected int numberOfBlocksMoved;
+
 	
 	
 	protected Block tmpCollisionBlock = null;
@@ -70,8 +56,7 @@ public class Enemy {
 		this.enemyType = enemyType;
 		
 		
-		direction   = Direction.LEFT; 
-		this.batch  = batch;
+		direction   = Direction.LEFT;
 		
 		bounds = new Rectangle();
 		tmpBounds = new Rectangle();
@@ -102,7 +87,7 @@ public class Enemy {
 	 * 
 	 */
 	public void update(float delta){
-
+		//Unit enemy = new Enemy(0,0,null,null);
 	}
 	
 	
@@ -111,14 +96,14 @@ public class Enemy {
 	 */
 	protected void draw()
 	{
-		if (iAmDead == true)
+		if (iAmDead)
 		{
 			iAmMoving = false;
 			squash.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 			squash.draw(batch);
-			if (deathTimerStarted == false)
+			if (!deathTimerStarted)
 			{
-				deathtimer = TimeUtils.millis(); //Start the death timer
+				deathTimer = TimeUtils.millis(); //Start the death timer
 				deathTimerStarted = true;
 			}
 		}
@@ -127,7 +112,7 @@ public class Enemy {
 			numberOfBlocksMoved+= speed.x;
 			if (direction == Direction.LEFT)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.x = bounds.x - speed.x;
 					batch.draw(animationLeft.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -143,7 +128,7 @@ public class Enemy {
 			}
 			else if (direction == Direction.RIGHT)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.x = bounds.x + speed.x;
 					batch.draw(animationRight.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -159,7 +144,7 @@ public class Enemy {
 			}
 			else if (direction == Direction.DOWN)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.y = bounds.y - speed.y;
 					batch.draw(animationDown.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -175,7 +160,7 @@ public class Enemy {
 			}
 			else if (direction == Direction.UP)
 			{
-				if (iAmMoving == true)
+				if (iAmMoving)
 				{
 					bounds.y = bounds.y + speed.y;
 					batch.draw(animationUp.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -204,17 +189,17 @@ public class Enemy {
 		// Check if any block overlaps with this unit. If it does, this unit must die.
 		for (Block i : blockList)
 		{
-			if (bounds.overlaps(i.getBounds()) && iAmDead == false)
+			if (bounds.overlaps(i.getBounds()) && !iAmDead)
 			{
 				iAmMoving = false;
 				iAmDead = true;
 				if (enemyType == EnemyType.Fish)
 				{
-					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Blue,batch,textureLoader));
+					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Blue,batch));
 				}
 				else if (enemyType == EnemyType.Shark)
 				{
-					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Grey,batch,textureLoader));
+					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Grey,batch));
 				}
 				break;
 			}
@@ -223,17 +208,17 @@ public class Enemy {
 		//Check if the player is colliding with an explosion. If it does, this unit must die.
 		for (Explosion i: explosionList)
 		{
-			if (bounds.overlaps(i.getBounds()) && iAmDead == false)
+			if (bounds.overlaps(i.getBounds()) && !iAmDead)
 			{
 				iAmMoving = false;
 				iAmDead = true;
 				if (enemyType == EnemyType.Fish)
 				{
-					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Blue,batch,textureLoader));
+					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Blue,batch));
 				}
 				else if (enemyType == EnemyType.Shark)
 				{
-					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Grey,batch,textureLoader));
+					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Grey,batch));
 				}
 				break;
 			}
@@ -309,8 +294,6 @@ public class Enemy {
 	
 	/**
 	 * Determines if the enemy can move towards the specified direction.
-	 * 
-	 * @param
 	 * @return True if the enemy is free to move and false otherwise.
 	 */
 	public boolean canMove(Direction direction){
@@ -357,7 +340,7 @@ public class Enemy {
 		//Check if block collides with other blocks.
 		for (Block i : blockList)
 		{	
-				if(i.getBounds().overlaps(tmpBounds) == true)
+				if(i.getBounds().overlaps(tmpBounds))
 				{
 					return false;
 				}	
@@ -374,16 +357,7 @@ public class Enemy {
 	public Rectangle getBounds(){
 		return bounds;
 	}
-	
-	
-	/**
-	 * Returns if the player has issued a push command or not
-	 * @return Boolean 
-	 */
-	public boolean getIsPushing(){
-		return iAmPushing;
-	}
-	
+
 	
 	/**
 	 * Returns the units's facing direction
@@ -429,36 +403,15 @@ public class Enemy {
 
 	public void dispose() {
 
-		textureLoader = null;
-		atlasLeft = null;
-		atlasRight = null;
-		atlasUp = null;
-		atlasDown = null;
-		
-		animationLeft = null;
-		animationRight = null;
-		animationUp = null;
-		animationDown = null;
-	
-		squash = null;
-		batch = null;
-		bounds = null;
-		tmpBounds = null;
-		direction = null;
-		speed = null;
-		blockList = null;
-		squashList = null;
-		enemyType = null;
 	}
 
 	
 	/**
 	 * If the unit has been killed, this method returns that unit, otherwise it returns null.
-	 * @return
 	 */
 	public Enemy getDeadEnemy()
 	{
-		if (iAmDead == true && TimeUtils.timeSinceMillis(deathtimer) > 500)
+		if (iAmDead && TimeUtils.timeSinceMillis(deathTimer) > 500)
 		{
 			return this;
 		}
@@ -471,9 +424,5 @@ public class Enemy {
 	public boolean isDead(){
 		return iAmDead;
 	}
-	
-	public void setDead(boolean isDead){
-		iAmDead = isDead;
-	}
-	
+
 }
