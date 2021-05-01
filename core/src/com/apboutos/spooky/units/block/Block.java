@@ -516,15 +516,7 @@ public class Block extends Unit {
 	 */	
 
 	public void dispose(){	
-		block = null;
-		//deadBlock = null; //Causes a null pointer exception if enabled.
-		batch = null;
-		bounds = null;
-		direction = null;
-		blockList = null;
-		speed = null;
-		tmpBounds = null;
-		type = null;
+
 	}	
 	
 	

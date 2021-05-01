@@ -27,9 +27,9 @@ public class Spooky extends Game {
 		camera = new OrthographicCamera(GameDimensions.screenWidth,GameDimensions.screenHeight);
 		splash = new Splash(this);
 		mainmenu = new MainMenu(this);
+		settingsScreen = new SettingsScreen(batch,camera);
 		levelChanger = new LevelChanger(this);
 		level = new Level(this);
-		settingsScreen = new SettingsScreen(batch,camera);
 		setScreen(mainmenu);
 
 	}

@@ -4,15 +4,12 @@ import com.apboutos.spooky.boot.Spooky;
 import com.apboutos.spooky.effects.SquashStar;
 import com.apboutos.spooky.units.block.Block;
 import com.apboutos.spooky.units.enemy.Enemy;
-import com.apboutos.spooky.utilities.PlayerInfo;
+import com.apboutos.spooky.utilities.*;
 import com.apboutos.spooky.effects.Explosion;
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
 import com.apboutos.spooky.units.block.Standard;
 import com.apboutos.spooky.units.enemy.Fish;
-import com.apboutos.spooky.utilities.BlockType;
-import com.apboutos.spooky.utilities.EnemyType;
-import com.apboutos.spooky.utilities.LevelInitializer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -39,12 +36,14 @@ public class Level implements Screen {
 	private SquashStar tmpStar; // A temporary SquashStar object, used for removing SquashStars from the squashList.
 	private Explosion tmpExplosion;
 	private float deltaTime = 0; // The time passed between frames. It is used for animations.
-	private boolean gearIsPressed = false; // Whether the settings gear inside the level's interface is pressed.
+	private Boolean gearIsPressed = false; // Whether the settings gear inside the level's interface is pressed.
 	private final Vector3 touchCoords; // The coordinates where the player touched the screen.
 	public boolean goToNextLevel = false; // Flag that signals the level change.
 	private int level=1; //The level's number i.e. 1 for the first level, 2 for the second and so on.
 	private final PlayerInfo playerInfo; //The player's information like lives, score etc.
 	private Sprite background;
+
+	private final InputHandler inputHandler;
 	
 	public Level(Spooky spooky){		
 		this.spooky = spooky;
@@ -63,6 +62,15 @@ public class Level implements Screen {
 				enemyList.add((Enemy) unit);
 			}
 		}
+		player = new Player(-7, -5, spooky.batch);
+		player.setBlockList(blockList);
+		player.setEnemyList(enemyList);
+		player.setSquashList(squashList);
+		player.setExplosionList(explosionList);
+		units.add(player);
+
+		inputHandler = new InputHandler(player, spooky.camera, gearIsPressed,spooky.settingsScreen.getSettings(),units);
+
 		tmpBlock = new Standard(0, 0, null,BlockType.Standard);
 		tmpEnemy = new Fish(0, 0, null,EnemyType.Fish);
 		tmpStar = new SquashStar(0,0,null,null);
@@ -81,14 +89,10 @@ public class Level implements Screen {
 		background = new Sprite(TextureLoader.bubblesBackground);
 		background.setBounds(-540, -360, 1080, 720);
 
-		player = new Player(-7, -5, spooky.batch,spooky.camera,spooky.settingsScreen.getSettings());
-		player.setBlockList(blockList);
-		player.setEnemyList(enemyList);
-		player.setSquashList(squashList);
-		player.setExplosionList(explosionList);
-		units.add(player);
+
+
 		goToNextLevel = false;
-		
+
 		for (Block i : blockList)
 		{
 			i.setBlockList(blockList);
@@ -120,21 +124,12 @@ public class Level implements Screen {
 				
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		touchCoords.x = 0;
-		touchCoords.y = 0;
-		if (Gdx.input.isTouched())
-		{
-			touchCoords.x = Gdx.input.getX();
-			touchCoords.y = Gdx.input.getY();
-			spooky.camera.unproject(touchCoords);
-			System.out.println("x = "+ touchCoords.x);
-			System.out.println("y = "+ touchCoords.y);
-		}
-		if (touchCoords.x > 320 && touchCoords.y < -200)//TODO coord remake
-		{
-			gearIsPressed = true;
-		}
+
+		inputHandler.handleInput();
+
+
+
+
 		spooky.batch.setProjectionMatrix(spooky.camera.combined);
 		spooky.batch.begin();
 		

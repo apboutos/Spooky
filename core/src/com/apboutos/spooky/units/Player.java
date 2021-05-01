@@ -9,10 +9,7 @@ import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.StarColor;
 import com.apboutos.spooky.effects.Explosion;
-import com.apboutos.spooky.level.Settings;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,6 +19,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -35,7 +33,8 @@ import java.util.ArrayList;
  *		
  */
 
-
+@Setter
+@Getter
 public class Player extends Unit{
 
 	@Setter
@@ -50,7 +49,7 @@ public class Player extends Unit{
 	private Sprite squash;
 	
 	private final SpriteBatch batch; // The game's SpriteBatch.
-	private final OrthographicCamera camera; // The game's camera.
+	//private final OrthographicCamera camera; // The game's camera.
 	
 	
 	private final Rectangle tmpBounds; // Temporary Rectangle used for collision detection.
@@ -61,7 +60,7 @@ public class Player extends Unit{
 	private ArrayList<SquashStar> squashList; // The array of SquashStars from the Level, used to create stars when player is dead.
 	private ArrayList<Explosion> explosionList;
 
-	private final Settings settings; // The game's settings.
+	//private final Settings settings; // The game's settings.
 
 	
 	
@@ -71,10 +70,9 @@ public class Player extends Unit{
 	 * @param x Original position x in units
 	 * @param y Original position y in units
 	 * @param batch A SpriteBatch object that will do the rendering
-	 * @param camera The game's OrthographicCamera
 	 */
 	
-	public Player(float x,float y,SpriteBatch batch,OrthographicCamera camera,Settings settings){
+	public Player(float x,float y,SpriteBatch batch){
 
 		playerMovingUp = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingUp.getRegions());
 		playerMovingDown = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingDown.getRegions());
@@ -88,8 +86,8 @@ public class Player extends Unit{
 		
 		direction   = Direction.LEFT;
 		this.batch  = batch;
-		this.camera = camera;
-		this.settings = settings;
+		//this.camera = camera;
+		//this.settings = settings;
 		bounds.x = x* GameDimensions.unitWidth;
 		bounds.y = y*GameDimensions.unitHeight;
 		bounds.width  = GameDimensions.unitWidth;
@@ -121,7 +119,6 @@ public class Player extends Unit{
 	public void update(float delta){
 		
 		this.delta = delta;
-		inputHandle();
 		collisionDetect();
 		draw();
 
@@ -211,75 +208,7 @@ public class Player extends Unit{
 			} 
 		}
 	}
-	/**
-	 * Handles player's input
-	 * Keys handled:LEFT,RIGHT,UP,DOWN
-	 */
-	
-	private void inputHandle(){
-		coords.x = Gdx.input.getX();
-		coords.y = Gdx.input.getY();
-		camera.unproject(coords);
-		iAmPushing = false;
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE) && settings.controls == 0)
-		{
-			push();
-			//iAmPushing = true;
-		}
-		if (Gdx.input.isKeyPressed(Keys.UP) && settings.controls == 0 && !iAmMoving)
-		{
-			iAmMoving = true;
-			direction = Direction.UP;
-		}
-		else if (Gdx.input.isKeyPressed(Keys.DOWN) && settings.controls == 0 && !iAmMoving)
-		{
-			iAmMoving = true;
-			direction = Direction.DOWN;
-		}
-		else if (Gdx.input.isKeyPressed(Keys.LEFT) && settings.controls == 0 && !iAmMoving)
-		{
-			iAmMoving = true;
-			direction = Direction.LEFT;
-		}
-		else if (Gdx.input.isKeyPressed(Keys.RIGHT) && settings.controls == 0 && !iAmMoving)
-		{
-			iAmMoving = true;
-			direction = Direction.RIGHT;
-		}
-		else if (Gdx.input.isTouched() && settings.controls == 1) //TODO Remake button coordinates
-		{	
-			if (!iAmMoving)
-			{
-				iAmPushing = false;
-				if ( coords.x <= -168)
-				{
-					iAmMoving = true;
-					direction = Direction.LEFT;
-				}
-				else if(coords.x > 168 && coords.y > -120)
-				{
-					iAmMoving = true;
-					direction = Direction.RIGHT;
-				}
-				else if((coords.x > -168 && coords.x<= 168) && coords.y < 0)
-				{
-					iAmMoving = true;
-					direction = Direction.DOWN;
-				}
-				else if((coords.x > -168 && coords.x<= 168) && coords.y > 0)
-				{
-					iAmMoving = true;
-					direction = Direction.UP;
-				}
-				else if((coords.x > 240 && coords.y < -120))
-				{
-					iAmPushing = true;
-				}
-			}	
-		}
-	}
-	
-	
+
 	/**
 	 * Detects if the player is going to collide with a map border
 	 * or a block in his next move and prevents him from doing so.
@@ -378,57 +307,6 @@ public class Player extends Unit{
 		}
 		
 	}
-	
-
-	
-	/**
-	 * Finds the correct block and pass a push command to it. 
-	 */
-	private void push(){
-		
-		for(Block i : blockList)
-		{
-			// If I don't have this if, the player will be able to push blocks
-			// that are already moving.
-			if(!i.isMoving())
-			{
-				if (direction == Direction.UP)
-				{
-					if (i.getBounds().overlaps(new Rectangle(bounds.x, bounds.y + speed.y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-					{
-						i.push(direction);
-						break;
-					}
-				}
-				else if (direction == Direction.DOWN)
-				{
-					if (i.getBounds().overlaps(new Rectangle(bounds.x, bounds.y - speed.y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-					{
-						i.push(direction);
-						break;
-					}
-				}
-				else if (direction == Direction.LEFT)
-				{
-					if (i.getBounds().overlaps(new Rectangle(bounds.x - speed.x, bounds.y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-					{
-						i.push(direction);
-						break;
-					}
-				}
-				else if (direction == Direction.RIGHT)
-				{
-					if (i.getBounds().overlaps(new Rectangle(bounds.x + speed.x, bounds.y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-					{
-						i.push(direction);
-						break;
-					}
-				}
-			}	
-		}
-			
-	}
-	
 	
 	/**
 	 * Dispose any resources used.
