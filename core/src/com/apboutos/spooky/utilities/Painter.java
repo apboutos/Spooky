@@ -2,9 +2,8 @@ package com.apboutos.spooky.utilities;
 
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
+import com.apboutos.spooky.units.enemy.Enemy;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class Painter {
@@ -26,43 +25,68 @@ public class Painter {
         batch.end();
     }
 
-    public void draw(List<Unit> units){
 
-
-
-    }
 
     public void draw(Unit unit, float delta){
 
         if(unit.isDead()){
 
-            ((Player)unit).getSquash().setBounds(unit.getBounds().x,unit.getBounds().y,unit.getBounds().width,unit.getBounds().height);
-            ((Player)unit).getSquash().draw(batch);
-            return;
+            if(unit instanceof Player) drawPlayerSquash((Player) unit);
+            if(unit instanceof Enemy) drawEnemySquash((Enemy) unit);
         }
-
-        switch (unit.getDirection()){
-            case UP: if(unit.isMoving()) batch.draw(((Player)unit).getPlayerMovingUp().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
-                     else batch.draw(((Player)unit).getPlayerMovingUp().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
-                     break;
-            case DOWN:  if(unit.isMoving()) batch.draw(((Player)unit).getPlayerMovingDown().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
-                        else batch.draw(((Player)unit).getPlayerMovingDown().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
-                        break;
-            case LEFT:  if(unit.isMoving()){
-                        batch.draw(((Player)unit).getPlayerMovingLeft().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
-                        System.out.println("MOVING LEFT");
-                        System.out.println("delta = " + delta);
-                        }
-                        else {
-                            batch.draw(((Player)unit).getPlayerMovingLeft().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
-                            //System.out.println("SITING LEFT");
-                        }
-                        break;
-            case RIGHT: if(unit.isMoving()) batch.draw(((Player)unit).getPlayerMovingRight().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
-                        else batch.draw(((Player)unit).getPlayerMovingRight().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
-                        break;
+        else {
+            if(unit instanceof Player) drawPlayer((Player) unit , delta);
+            if(unit instanceof Enemy) drawEnemy((Enemy) unit, delta);
         }
 
     }
+
+    private void drawPlayerSquash(Player player){
+        player.getSquash().setBounds(player.getBounds().x,player.getBounds().y,player.getBounds().width,player.getBounds().height);
+        player.getSquash().draw(batch);
+    }
+
+    private void drawEnemySquash(Enemy enemy){
+        enemy.getSquash().setBounds(enemy.getBounds().x,enemy.getBounds().y,enemy.getBounds().width,enemy.getBounds().height);
+        enemy.getSquash().draw(batch);
+    }
+
+
+    private void drawPlayer(Player player , float delta){
+
+        switch (player.getDirection()){
+            case UP:    if(player.isMoving()) batch.draw(player.getPlayerMovingUp().getKeyFrame(delta,true),player.getBounds().x,player.getBounds().y);
+            else batch.draw(player.getPlayerMovingUp().getKeyFrame(0,true),player.getBounds().x,player.getBounds().y);
+                break;
+            case DOWN:  if(player.isMoving()) batch.draw(player.getPlayerMovingDown().getKeyFrame(delta,true),player.getBounds().x,player.getBounds().y);
+            else batch.draw(player.getPlayerMovingDown().getKeyFrame(0,true),player.getBounds().x,player.getBounds().y);
+                break;
+            case LEFT:  if(player.isMoving()) batch.draw(player.getPlayerMovingLeft().getKeyFrame(delta,true),player.getBounds().x,player.getBounds().y);
+            else batch.draw(player.getPlayerMovingLeft().getKeyFrame(0,true),player.getBounds().x,player.getBounds().y);
+                break;
+            case RIGHT: if(player.isMoving()) batch.draw(player.getPlayerMovingRight().getKeyFrame(delta,true),player.getBounds().x,player.getBounds().y);
+            else batch.draw(player.getPlayerMovingRight().getKeyFrame(0,true),player.getBounds().x,player.getBounds().y);
+                break;
+        }
+    }
+
+    private void drawEnemy(Enemy enemy, float delta){
+
+        switch (enemy.getDirection()){
+            case UP:    if(enemy.isMoving()) batch.draw(enemy.getAnimationUp().getKeyFrame(delta,true),enemy.getBounds().x,enemy.getBounds().y);
+            else batch.draw(enemy.getAnimationUp().getKeyFrame(0,true),enemy.getBounds().x,enemy.getBounds().y);
+                break;
+            case DOWN:  if(enemy.isMoving()) batch.draw(enemy.getAnimationDown().getKeyFrame(delta,true),enemy.getBounds().x,enemy.getBounds().y);
+            else batch.draw(enemy.getAnimationDown().getKeyFrame(0,true),enemy.getBounds().x,enemy.getBounds().y);
+                break;
+            case LEFT:  if(enemy.isMoving()) batch.draw(enemy.getAnimationLeft().getKeyFrame(delta,true),enemy.getBounds().x,enemy.getBounds().y);
+            else batch.draw(enemy.getAnimationLeft().getKeyFrame(0,true),enemy.getBounds().x,enemy.getBounds().y);
+                break;
+            case RIGHT: if(enemy.isMoving()) batch.draw(enemy.getAnimationRight().getKeyFrame(delta,true),enemy.getBounds().x,enemy.getBounds().y);
+            else batch.draw(enemy.getAnimationRight().getKeyFrame(0,true),enemy.getBounds().x,enemy.getBounds().y);
+                break;
+        }
+    }
+
 
 }
