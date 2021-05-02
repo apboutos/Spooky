@@ -34,7 +34,7 @@ public class Painter {
 
     public void draw(Unit unit, float delta){
 
-        if(unit.isIAmDead()){
+        if(unit.isDead()){
 
             ((Player)unit).getSquash().setBounds(unit.getBounds().x,unit.getBounds().y,unit.getBounds().width,unit.getBounds().height);
             ((Player)unit).getSquash().draw(batch);
@@ -42,13 +42,13 @@ public class Painter {
         }
 
         switch (unit.getDirection()){
-            case UP: if(unit.isIAmMoving()) batch.draw(((Player)unit).getPlayerMovingUp().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
+            case UP: if(unit.isMoving()) batch.draw(((Player)unit).getPlayerMovingUp().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
                      else batch.draw(((Player)unit).getPlayerMovingUp().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
                      break;
-            case DOWN:  if(unit.isIAmMoving()) batch.draw(((Player)unit).getPlayerMovingDown().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
+            case DOWN:  if(unit.isMoving()) batch.draw(((Player)unit).getPlayerMovingDown().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
                         else batch.draw(((Player)unit).getPlayerMovingDown().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
                         break;
-            case LEFT:  if(unit.isIAmMoving()){
+            case LEFT:  if(unit.isMoving()){
                         batch.draw(((Player)unit).getPlayerMovingLeft().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
                         System.out.println("MOVING LEFT");
                         System.out.println("delta = " + delta);
@@ -58,7 +58,7 @@ public class Painter {
                             //System.out.println("SITING LEFT");
                         }
                         break;
-            case RIGHT: if(unit.isIAmMoving()) batch.draw(((Player)unit).getPlayerMovingRight().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
+            case RIGHT: if(unit.isMoving()) batch.draw(((Player)unit).getPlayerMovingRight().getKeyFrame(delta,true),unit.getBounds().x,unit.getBounds().y);
                         else batch.draw(((Player)unit).getPlayerMovingRight().getKeyFrame(0,true),unit.getBounds().x,unit.getBounds().y);
                         break;
         }

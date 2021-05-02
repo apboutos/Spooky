@@ -31,21 +31,21 @@ public class CollisionDetector {
 
             if(unit instanceof Player){
                 if(detectCollisionWithTheMapBorder(unit)){
-                    unit.setIAmMoving(false);
+                    unit.setMoving(false);
                 }
                 if(detectCollisionWithStaticBlock(unit)){
-                    unit.setIAmMoving(false);
+                    unit.setMoving(false);
                 }
                 if(detectCollisionWithEnemy(unit)){
-                    unit.setIAmDead(true);
+                    unit.setDead(true);
                     stars.add(new SquashStar(unit.getBounds().x,unit.getBounds().y, StarColor.Yellow,batch));
                 }
                 if(detectCollisionWithMovingBlock(unit)){
-                    unit.setIAmDead(true);
+                    unit.setDead(true);
                     stars.add(new SquashStar(unit.getBounds().x,unit.getBounds().y, StarColor.Yellow,batch));
                 }
                 if(detectCollisionWithExplosion(unit)){
-                    unit.setIAmDead(true);
+                    unit.setDead(true);
                     stars.add(new SquashStar(unit.getBounds().x,unit.getBounds().y, StarColor.Yellow,batch));
                 }
             }
@@ -88,7 +88,7 @@ public class CollisionDetector {
             case RIGHT: boundsOnNextMove.setPosition(unit.getBounds().x  + unit.getSpeed().x,unit.getBounds().y); break;
         }
         for(Unit i : units){
-            if(i instanceof Block && !i.isIAmDead() &&boundsOnNextMove.overlaps(i.getBounds()))
+            if(i instanceof Block && !i.isDead() &&boundsOnNextMove.overlaps(i.getBounds()))
                 return true;
         }
         return false;
@@ -96,7 +96,7 @@ public class CollisionDetector {
 
     private boolean detectCollisionWithEnemy(Unit unit){
         for(Unit i : units){
-            if(i instanceof Enemy && i.getBounds().overlaps(unit.getBounds()) &&!((Enemy) i).isDead() && !unit.isIAmDead())
+            if(i instanceof Enemy && i.getBounds().overlaps(unit.getBounds()) &&!((Enemy) i).isDead() && !unit.isDead())
                 return true;
         }
         return false;
@@ -104,7 +104,7 @@ public class CollisionDetector {
 
     private boolean detectCollisionWithMovingBlock(Unit unit){
         for(Unit i : units){
-            if(i instanceof Block && i.isIAmMoving() && !i.isIAmDead() && unit.getBounds().overlaps(i.getBounds()) && !unit.isIAmDead()){
+            if(i instanceof Block && i.isMoving() && !i.isDead() && unit.getBounds().overlaps(i.getBounds()) && !unit.isDead()){
                 return true;
             }
         }
@@ -113,7 +113,7 @@ public class CollisionDetector {
 
     private boolean detectCollisionWithExplosion(Unit unit){
         for (Explosion explosion : explosions){
-            if(unit.getBounds().overlaps(explosion.getBounds()) && !unit.isIAmDead())
+            if(unit.getBounds().overlaps(explosion.getBounds()) && !unit.isDead())
                 return true;
         }
         return false;

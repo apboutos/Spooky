@@ -59,7 +59,7 @@ public class Shark extends Enemy{
 	 * push blocks and generally try to antagonize the player.
 	 */
 	private void artificialIntelligence(){
-		iAmMoving = true;
+		isMoving = true;
 		/* The logic of the fish is very simple. It will randomly change directions
 		 * when it collides with another unit like a block, or when it has moved 4 times.
 		 * It will not push any blocks.

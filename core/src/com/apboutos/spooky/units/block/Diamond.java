@@ -4,12 +4,10 @@ import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.GameDimensions;
 import com.apboutos.spooky.utilities.Movability;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import lombok.Setter;
 
 
 /**
@@ -64,36 +62,36 @@ public class Diamond extends Block{
 	public void update(){
 		
 		
-		if (iAmPushed)
+		if (isPushed)
 		{
 			Movability tmp = iAmEligibleToMove();
 			//If the diamond is super it must not move.
 			if ( tmp == Movability.eligible && !iAmSuper)
 			{
-				iAmMoving = true;
+				isMoving = true;
 			}
 			else if (tmp == Movability.blocked)
 			{
-				iAmMoving = false;
+				isMoving = false;
 			}
 			else if (tmp == Movability.blockedByDiamond && !iAmSuper)
 			{
-				iAmMoving = true;
+				isMoving = true;
 			}
-			iAmPushed = false;
+			isPushed = false;
 		}
-		if( iHaveCollidedWithMap() && iAmMoving)
+		if( iHaveCollidedWithMap() && isMoving)
 		{
-			iAmMoving = false;
+			isMoving = false;
 		}
-		else if (iHaveCollidedWithBlock() && iAmMoving)
+		else if (iHaveCollidedWithBlock() && isMoving)
 		{
 			if(!iHaveCollidedWithDiamondBlock())
 			{
-				iAmMoving = false;
+				isMoving = false;
 			}		
 		}
-		else if (iHaveCollidedWithMovingBlock() && iAmMoving && !iAmSuper)
+		else if (iHaveCollidedWithMovingBlock() && isMoving && !iAmSuper)
 		{
 			bounce();				
 		}
@@ -101,7 +99,7 @@ public class Diamond extends Block{
 		//is not super stacks on top of another diamond block.
 		if(iAmOnTopOfaDiamond() && !iAmSuper)
 		{
-			iAmMoving = false;
+			isMoving = false;
 			iAmSuper = true;
 			block.setTexture(TextureLoader.superDiamondBlock);
 			numberOfSuperDiamondBlocks++;

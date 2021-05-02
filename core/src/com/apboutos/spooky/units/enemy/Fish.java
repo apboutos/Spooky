@@ -4,11 +4,11 @@ import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.EnemyType;
+import com.apboutos.spooky.utilities.Speed;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class Fish extends Enemy{
 		animationRight = new Animation<TextureRegion>(1/10f, TextureLoader.fishMovingRight.getRegions());
 		squash = new Sprite(TextureLoader.squash);
 
-		speed  = new Vector2(3,3); 
+		speed  = Speed.FISH_SPEED;
 	}
 	
 	/** 
@@ -56,7 +56,7 @@ public class Fish extends Enemy{
 	 * push blocks and generally try to antagonize the player.
 	 */
 	private void artificialIntelligence(){
-		iAmMoving = true;
+		isMoving = true;
 		/* The logic of the fish is very simple. It will randomly change directions
 		 * when it collides with another unit like a block, or when it has moved 4 times.
 		 * It will not push any blocks.

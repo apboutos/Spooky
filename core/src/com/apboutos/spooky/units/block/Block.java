@@ -57,9 +57,9 @@ public class Block extends Unit {
 	 */
 	public Block(){
 		
-		iAmMoving = false;
-		iAmDead   = false;
-		iAmPushed = false;
+		isMoving = false;
+		isDead = false;
+		isPushed = false;
 	    deathTimerStarted = false;
 	    deathTimer = 0;
 		bounds = new Rectangle();
@@ -82,15 +82,15 @@ public class Block extends Unit {
 	 */
 	public void kill(){
 		
-		iAmMoving = false;
-		iAmDead = true;
+		isMoving = false;
+		isDead = true;
 	}
 	
 	
 	public void push(Direction direction){
 		
 		this.direction = direction;
-		iAmPushed = true;
+		isPushed = true;
 		
 	}
 	
@@ -107,7 +107,7 @@ public class Block extends Unit {
 			   instead. 
 			*/
 			
-			if (!iAmMoving && iAmPushed)
+			if (!isMoving && isPushed)
 			{
 				
 				//Checks if the pushed block can't move due to being near a wall.
@@ -210,7 +210,7 @@ public class Block extends Unit {
 				}
 				
 			}
-			if (iAmPushed)
+			if (isPushed)
 			{
 				
 				return Movability.eligible;
@@ -439,7 +439,7 @@ public class Block extends Unit {
 	 *  speed.
 	 */
 	protected void moving(){
-		if (iAmMoving && !iAmDead)
+		if (isMoving && !isDead)
 		{
 			if (direction == Direction.UP)
 			{
@@ -468,7 +468,7 @@ public class Block extends Unit {
 	 */
 	protected void draw(){
 		block.setPosition(bounds.x, bounds.y);
-		if (iAmDead)
+		if (isDead)
 		{
 			delta += Gdx.graphics.getDeltaTime();
 			batch.draw(deadBlock.getKeyFrame(delta),bounds.x,bounds.y);
@@ -560,7 +560,7 @@ public class Block extends Unit {
 	 */
 	public Block getDeadBlock()
 	{
-		if (iAmDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*1000)
+		if (isDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*1000)
 		{
 			return this;
 		}
@@ -585,7 +585,7 @@ public class Block extends Unit {
 	 */
 	public boolean isMoving()
 	{
-		return this.iAmMoving;
+		return this.isMoving;
 	}
 	
 

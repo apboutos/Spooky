@@ -17,10 +17,10 @@ public abstract class Unit {
     protected Direction direction;
     protected Vector2 speed;
 
-    protected boolean iAmDead;
-    protected boolean iAmMoving;
-    protected boolean iAmPushing;
-    protected boolean iAmPushed;
+    protected boolean isDead;
+    protected boolean isMoving;
+    protected boolean isPushing;
+    protected boolean isPushed;
 
     protected boolean deathTimerStarted;
     protected long deathTimer;

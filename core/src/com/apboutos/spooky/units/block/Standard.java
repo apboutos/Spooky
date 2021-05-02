@@ -47,29 +47,29 @@ public class Standard extends Block{
 	@ Override
 	public void update(){
 		
-		if (iAmPushed)
+		if (isPushed)
 		{
 			Movability tmp = iAmEligibleToMove();
 			if ( tmp == Movability.eligible )
 			{
-				iAmMoving = true;
+				isMoving = true;
 			}
 			else if (tmp == Movability.blocked || tmp == Movability.blockedByDiamond)
 			{
-				iAmMoving = false;
-				iAmDead = true;
+				isMoving = false;
+				isDead = true;
 			}
-			iAmPushed = false;
+			isPushed = false;
 		}
-		if( iHaveCollidedWithMap() && iAmMoving)
+		if( iHaveCollidedWithMap() && isMoving)
 		{
-			iAmMoving = false;
+			isMoving = false;
 		}
-		else if (iHaveCollidedWithBlock() && iAmMoving)
+		else if (iHaveCollidedWithBlock() && isMoving)
 		{
-			iAmMoving = false;
+			isMoving = false;
 		}
-		else if (iHaveCollidedWithMovingBlock() && iAmMoving)
+		else if (iHaveCollidedWithMovingBlock() && isMoving)
 		{
 			bounce();				
 		}

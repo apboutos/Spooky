@@ -71,8 +71,8 @@ public class Enemy extends Unit {
 		tmpBounds.height = bounds.height;
 		
 		
-		iAmPushing = false; 
-		iAmDead    = false;
+		isPushing = false;
+		isDead = false;
 		numberOfBlocksMoved = 0;	
 	}
 	
@@ -96,9 +96,9 @@ public class Enemy extends Unit {
 	 */
 	protected void draw()
 	{
-		if (iAmDead)
+		if (isDead)
 		{
-			iAmMoving = false;
+			isMoving = false;
 			squash.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 			squash.draw(batch);
 			if (!deathTimerStarted)
@@ -112,7 +112,7 @@ public class Enemy extends Unit {
 			numberOfBlocksMoved+= speed.x;
 			if (direction == Direction.LEFT)
 			{
-				if (iAmMoving)
+				if (isMoving)
 				{
 					bounds.x = bounds.x - speed.x;
 					batch.draw(animationLeft.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -123,12 +123,12 @@ public class Enemy extends Unit {
 				}
 				if (((int)bounds.x)%40 == 0)
 				{
-					iAmMoving = false;
+					isMoving = false;
 				}
 			}
 			else if (direction == Direction.RIGHT)
 			{
-				if (iAmMoving)
+				if (isMoving)
 				{
 					bounds.x = bounds.x + speed.x;
 					batch.draw(animationRight.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -139,12 +139,12 @@ public class Enemy extends Unit {
 				}
 				if (((int)bounds.x)%40 == 0)
 				{
-					iAmMoving = false;
+					isMoving = false;
 				}
 			}
 			else if (direction == Direction.DOWN)
 			{
-				if (iAmMoving)
+				if (isMoving)
 				{
 					bounds.y = bounds.y - speed.y;
 					batch.draw(animationDown.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -155,12 +155,12 @@ public class Enemy extends Unit {
 				}
 				if (((int)bounds.y)%40 == 0)
 				{
-					iAmMoving = false;
+					isMoving = false;
 				}
 			}
 			else if (direction == Direction.UP)
 			{
-				if (iAmMoving)
+				if (isMoving)
 				{
 					bounds.y = bounds.y + speed.y;
 					batch.draw(animationUp.getKeyFrame(delta, true),bounds.x,bounds.y);
@@ -171,7 +171,7 @@ public class Enemy extends Unit {
 				}
 				if (((int)bounds.y)%40 == 0)
 				{
-					iAmMoving = false;
+					isMoving = false;
 				}
 			}
 			
@@ -189,10 +189,10 @@ public class Enemy extends Unit {
 		// Check if any block overlaps with this unit. If it does, this unit must die.
 		for (Block i : blockList)
 		{
-			if (bounds.overlaps(i.getBounds()) && !iAmDead)
+			if (bounds.overlaps(i.getBounds()) && !isDead)
 			{
-				iAmMoving = false;
-				iAmDead = true;
+				isMoving = false;
+				isDead = true;
 				if (enemyType == EnemyType.Fish)
 				{
 					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Blue,batch));
@@ -208,10 +208,10 @@ public class Enemy extends Unit {
 		//Check if the player is colliding with an explosion. If it does, this unit must die.
 		for (Explosion i: explosionList)
 		{
-			if (bounds.overlaps(i.getBounds()) && !iAmDead)
+			if (bounds.overlaps(i.getBounds()) && !isDead)
 			{
-				iAmMoving = false;
-				iAmDead = true;
+				isMoving = false;
+				isDead = true;
 				if (enemyType == EnemyType.Fish)
 				{
 					squashList.add(new SquashStar(bounds.x,bounds.y,StarColor.Blue,batch));
@@ -230,7 +230,7 @@ public class Enemy extends Unit {
 			tmpBounds.setPosition(bounds.x - speed.x, bounds.y);
 			if(tmpBounds.x < GameDimensions.xAxisMinumum * GameDimensions.unitWidth)
 			{
-				iAmMoving = false;
+				isMoving = false;
 				iHaveCollidedWithMap = true;
 			}
 		}
@@ -239,7 +239,7 @@ public class Enemy extends Unit {
 			tmpBounds.setPosition(bounds.x + speed.x, bounds.y);
 			if(tmpBounds.x + tmpBounds.width > GameDimensions.xAxisMaximum * GameDimensions.unitWidth)
 			{
-				iAmMoving = false;
+				isMoving = false;
 				iHaveCollidedWithMap = true;
 			}
 		}
@@ -248,7 +248,7 @@ public class Enemy extends Unit {
 			tmpBounds.setPosition(bounds.x, bounds.y + speed.y);
 			if(tmpBounds.y + tmpBounds.height > GameDimensions.yAxisMaximum * GameDimensions.unitHeight)
 			{
-				iAmMoving = false;
+				isMoving = false;
 				iHaveCollidedWithMap = true;
 			}
 		}
@@ -257,7 +257,7 @@ public class Enemy extends Unit {
 			tmpBounds.setPosition(bounds.x, bounds.y - speed.y);
 			if(tmpBounds.y < GameDimensions.yAxisMinimum * GameDimensions.unitHeight)
 			{
-				iAmMoving = false;
+				isMoving = false;
 				iHaveCollidedWithMap = true;
 			}
 		}
@@ -283,7 +283,7 @@ public class Enemy extends Unit {
 			if (tmpBounds.overlaps(i.getBounds()))
 			{
 				tmpCollisionBlock = i;
-				iAmMoving = false;
+				isMoving = false;
 				iHaveCollidedWithBlock = true;
 				break;
 			}	
@@ -411,7 +411,7 @@ public class Enemy extends Unit {
 	 */
 	public Enemy getDeadEnemy()
 	{
-		if (iAmDead && TimeUtils.timeSinceMillis(deathTimer) > 500)
+		if (isDead && TimeUtils.timeSinceMillis(deathTimer) > 500)
 		{
 			return this;
 		}
@@ -422,7 +422,7 @@ public class Enemy extends Unit {
 	}
 	
 	public boolean isDead(){
-		return iAmDead;
+		return isDead;
 	}
 
 }

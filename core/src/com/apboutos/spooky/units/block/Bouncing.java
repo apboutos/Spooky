@@ -67,25 +67,25 @@ public class Bouncing extends Block{
 	@ Override
 	public void update(){
 				
-		if (iAmPushed && !iAmMoving)
+		if (isPushed && !isMoving)
 		{
 			Movability tmp = iAmEligibleToMove();
 			if ( tmp == Movability.eligible )
 			{
-				iAmMoving = true;
+				isMoving = true;
 			}
 			else if (tmp == Movability.blocked || tmp == Movability.blockedByDiamond)
 			{
-				iAmMoving = false;
-				iAmDead = true;
+				isMoving = false;
+				isDead = true;
 			}
-			iAmPushed = false;
+			isPushed = false;
 		}
-		if( iHaveCollidedWithMap() && iAmMoving)
+		if( iHaveCollidedWithMap() && isMoving)
 		{
 			if(currentBounces == maxBounces)
 			{
-				iAmMoving = false;
+				isMoving = false;
 				currentBounces = 0;
 			}
 			else
@@ -95,11 +95,11 @@ public class Bouncing extends Block{
 			}
 			
 		}
-		else if (iHaveCollidedWithBlock() && iAmMoving)
+		else if (iHaveCollidedWithBlock() && isMoving)
 		{
 			if(currentBounces == maxBounces)
 			{
-				iAmMoving = false;
+				isMoving = false;
 				currentBounces = 0;
 			}
 			else
@@ -108,7 +108,7 @@ public class Bouncing extends Block{
 				bounce();
 			}
 		}
-		else if (iHaveCollidedWithMovingBlock() && iAmMoving)
+		else if (iHaveCollidedWithMovingBlock() && isMoving)
 		{
 			bounce();
 		}

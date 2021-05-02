@@ -62,31 +62,31 @@ public class Dynamite extends Block{
 	@ Override
 	public void update(){
 		
-		if (iAmPushed)
+		if (isPushed)
 		{
 			Movability tmp = iAmEligibleToMove();
 			if ( tmp == Movability.eligible )
 			{
-				iAmMoving = true;
+				isMoving = true;
 			}
 			else if (tmp == Movability.blocked || tmp == Movability.blockedByDiamond)
 			{
-				iAmMoving = false;
-				iAmDead = true;
+				isMoving = false;
+				isDead = true;
 			}
-			iAmPushed = false;
+			isPushed = false;
 		}
-		if( iHaveCollidedWithMap() && iAmMoving)
+		if( iHaveCollidedWithMap() && isMoving)
 		{
-			iAmMoving = false;
+			isMoving = false;
 			explode();
 		}
-		else if (iHaveCollidedWithBlock() && iAmMoving)
+		else if (iHaveCollidedWithBlock() && isMoving)
 		{
-			iAmMoving = false;
+			isMoving = false;
 			explode();
 		}
-		else if (iHaveCollidedWithMovingBlock() && iAmMoving)
+		else if (iHaveCollidedWithMovingBlock() && isMoving)
 		{
 			bounce();				
 		}
@@ -155,7 +155,7 @@ public class Dynamite extends Block{
 	@ Override
 	public Block getDeadBlock()
 	{
-		if (iAmDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*6000)
+		if (isDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*6000)
 		{
 			explode();
 			return this;
