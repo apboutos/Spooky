@@ -73,8 +73,8 @@ public class LevelInitializer {
             case "Dynamite":    return new Dynamite(Integer.parseInt(x),Integer.parseInt(y), spooky.batch, BlockType.Dynamite);
             case "BigDynamite": return new Dynamite(Integer.parseInt(x),Integer.parseInt(y), spooky.batch, BlockType.BigDynamite);
             case "Diamond":     return new Diamond(Integer.parseInt(x),Integer.parseInt(y), spooky.batch, BlockType.Diamond);
-            case "Fish":        return new Fish(Float.parseFloat(x),Float.parseFloat(y), spooky.batch,EnemyType.Fish);
-            case "Shark":       return new Shark(Float.parseFloat(x),Float.parseFloat(y), spooky.batch,EnemyType.Shark);
+            case "Fish":        return new Fish(Float.parseFloat(x),Float.parseFloat(y));
+            case "Shark":       return new Shark(Float.parseFloat(x),Float.parseFloat(y));
             default:            throw new IllegalStateException("Type does not match with any known types");
         }
     }
