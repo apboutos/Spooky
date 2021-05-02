@@ -8,21 +8,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 
 public class InputHandler {
 
-    private Player player;
-    private Vector3 touchCoords;
+    private final Player player;
+    private final Vector3 touchCoords;
     private Boolean gearIsPressed;
-    private Settings settings;
-    private Camera camera;
-    private List<Unit> units;
+    private final Settings settings;
+    private final Camera camera;
+    private final List<Unit> units;
 
     public InputHandler(Player player, Camera camera, Boolean gearIsPressed, Settings settings, List<Unit> units){
 
@@ -59,55 +57,55 @@ public class InputHandler {
         {
             push();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)&& !player.isIAmMoving())
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)&& !player.isMoving())
         {
-            player.setIAmMoving(true);
+            player.setMoving(true);
             player.setDirection(Direction.UP);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)&& !player.isIAmMoving())
+        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)&& !player.isMoving())
         {
-            player.setIAmMoving(true);
+            player.setMoving(true);
             player.setDirection(Direction.DOWN);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !player.isIAmMoving())
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !player.isMoving())
         {
-            player.setIAmMoving(true);
+            player.setMoving(true);
             player.setDirection(Direction.LEFT);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)&& !player.isIAmMoving())
+        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)&& !player.isMoving())
         {
-            player.setIAmMoving(true);
+            player.setMoving(true);
             player.setDirection(Direction.RIGHT);
         }
     }
 
     private void handleAndroidInput(){
-        if (!player.isIAmMoving())
+        if (!player.isMoving())
         {
-            player.setIAmPushing(false);
+            player.setPushing(false);
             if ( touchCoords.x <= -168)
             {
-                player.setIAmMoving(true);
+                player.setMoving(true);
                 player.setDirection(Direction.LEFT);
             }
             else if(touchCoords.x > 168 && touchCoords.y > -120)
             {
-                player.setIAmMoving(true);
+                player.setMoving(true);
                 player.setDirection(Direction.RIGHT);
             }
             else if((touchCoords.x > -168 && touchCoords.x<= 168) && touchCoords.y < 0)
             {
-                player.setIAmMoving(true);
+                player.setMoving(true);
                 player.setDirection(Direction.DOWN);
             }
             else if((touchCoords.x > -168 && touchCoords.x<= 168) && touchCoords.y > 0)
             {
-                player.setIAmMoving(true);
+                player.setMoving(true);
                 player.setDirection(Direction.UP);
             }
             else if((touchCoords.x > 240 && touchCoords.y < -120))
             {
-                player.setIAmPushing(true);
+                player.setPushing(true);
             }
         }
     }
@@ -118,7 +116,7 @@ public class InputHandler {
         {
             // If I don't have this if, the player will be able to push blocks
             // that are already moving.
-            if(unit instanceof Block && !unit.isIAmMoving())
+            if(unit instanceof Block && !unit.isMoving())
             {
                 if (player.getDirection() == Direction.UP)
                 {
