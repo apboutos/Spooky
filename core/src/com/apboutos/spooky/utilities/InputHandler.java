@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -20,7 +21,8 @@ public class InputHandler {
     private Boolean gearIsPressed;
     private final Settings settings;
     private final Camera camera;
-    private final List<Unit> units;
+    @Setter
+    private List<Unit> units;
 
     public InputHandler(Player player, Camera camera, Boolean gearIsPressed, Settings settings, List<Unit> units){
 
