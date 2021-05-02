@@ -2,13 +2,14 @@ package com.apboutos.spooky.utilities;
 
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
+import com.apboutos.spooky.units.enemy.Enemy;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class PositionAdjustor {
 
     public void adjustPosition(Unit unit){
 
-        if(unit instanceof Player){
+        if(unit instanceof Player || unit instanceof Enemy){
 
             if(unit.isDead()){
                 unit.setMoving(false);
@@ -20,6 +21,7 @@ public class PositionAdjustor {
             }
             else if (unit.isMoving()) {
 
+                if(unit instanceof Enemy) ((Enemy)unit).setNumberOfBlocksMoved((int)(((Enemy)unit).getNumberOfBlocksMoved() + unit.getSpeed().x));
                 switch (unit.getDirection()) {
                     case UP: unit.getBounds().y += unit.getSpeed().y;
                              if ((int)unit.getBounds().y%GameDimensions.unitHeight == 0)
