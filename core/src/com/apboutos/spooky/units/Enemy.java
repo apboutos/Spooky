@@ -48,13 +48,14 @@ public class Enemy extends Unit {
 		bounds.width  = GameDimensions.unitWidth;
 		bounds.height = GameDimensions.unitHeight;
 
+		deathDuration = 500;
+
 		loadTexturesByType(enemyType);
 		loadSpeedByType(enemyType);
 	}
 
 	public void kill(){
 		isMoving = false;
-		isDead = true;
 		deathTimerStarted = true;
 		deathTimer = TimeUtils.millis();
 	}
@@ -95,16 +96,4 @@ public class Enemy extends Unit {
 			case Shark: speed = Speed.SHARK_SPEED; break;
 		}
 	}
-	/**
-	 * Returns true if the enemy is dead and 500 milliseconds have passed since his death.
-	 */
-	@Override
-	public boolean isDead(){
-		return isDead && TimeUtils.timeSinceMillis(deathTimer) > 500;
-	}
-
-	public boolean isDying(){
-		return deathTimerStarted;
-	}
-
 }

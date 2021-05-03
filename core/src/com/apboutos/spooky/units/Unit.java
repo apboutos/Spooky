@@ -3,6 +3,7 @@ package com.apboutos.spooky.units;
 import com.apboutos.spooky.utilities.Direction;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,17 +14,21 @@ import lombok.Setter;
 @Setter
 public abstract class Unit {
 
-    protected Rectangle bounds;
-    protected Direction direction;
-    protected Vector2 speed;
+    protected Rectangle bounds = null;
+    protected Direction direction = Direction.LEFT;
+    protected Vector2 speed = null;
 
-    protected boolean isDead;
-    protected boolean isMoving;
-    protected boolean isPushing;
-    protected boolean isPushed;
+    protected boolean isMoving = false;
+    protected boolean isPushing = false;
+    protected boolean isPushed = false;
 
-    protected boolean deathTimerStarted;
-    protected long deathTimer;
+    protected boolean deathTimerStarted = false;
+    protected long deathTimer = 0;
+    protected long deathDuration;
+
+    public boolean isDead(){
+        return deathTimerStarted && TimeUtils.timeSinceMillis(deathTimer) > deathDuration;
+    }
 
     public boolean isDying(){
         return deathTimerStarted;

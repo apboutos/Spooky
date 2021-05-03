@@ -13,8 +13,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Time;
-
 
 /**
  * Model class that represents the player's unit.
@@ -35,10 +33,10 @@ public class Player extends Unit{
 
 	public Player(float x,float y){
 
-		playerMovingUp = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingUp.getRegions());
-		playerMovingDown = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingDown.getRegions());
-		playerMovingLeft = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingLeft.getRegions());
-		playerMovingRight = new Animation<TextureRegion>(1/10f,TextureLoader.playerMovingRight.getRegions());
+		playerMovingUp = new Animation<>(1 / 10f, TextureLoader.playerMovingUp.getRegions());
+		playerMovingDown = new Animation<>(1 / 10f, TextureLoader.playerMovingDown.getRegions());
+		playerMovingLeft = new Animation<>(1 / 10f, TextureLoader.playerMovingLeft.getRegions());
+		playerMovingRight = new Animation<>(1 / 10f, TextureLoader.playerMovingRight.getRegions());
 
 		squash = new Sprite(TextureLoader.squash);
 
@@ -52,6 +50,8 @@ public class Player extends Unit{
 		bounds.width  = GameDimensions.unitWidth;
 		bounds.height = GameDimensions.unitHeight;
 
+		deathDuration = 1500;
+
 	}
 
 	public void stop(){
@@ -60,18 +60,8 @@ public class Player extends Unit{
 
 	public void kill(){
 		isMoving = false;
-		isDead = true;
 		deathTimerStarted = true;
 		deathTimer = TimeUtils.millis();
-	}
-
-	@Override
-	public boolean isDead(){
-		return isDead && TimeUtils.timeSinceMillis(deathTimer) > 1500;
-	}
-
-	public boolean isDying(){
-		return deathTimerStarted;
 	}
 
 }
