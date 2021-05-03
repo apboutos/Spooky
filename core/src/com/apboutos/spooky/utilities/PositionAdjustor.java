@@ -7,7 +7,7 @@ public class PositionAdjustor {
 
     public void adjustPosition(Unit unit) {
 
-        if (unit.isMoving()) {
+        if (unit.isMoving() && !unit.isDying()) {
             switch (unit.getDirection()) {
                 case UP:
                     unit.getBounds().y += unit.getSpeed().y;
