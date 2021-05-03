@@ -56,11 +56,11 @@ public class Painter {
 
     private void drawBlock(Block block){
 
-        block.getBlock().draw(batch);
+        batch.draw(block.getBlock(),block.getBounds().x,block.getBounds().y,block.getBounds().width,block.getBounds().height);
     }
 
     private void drawDeadBlockAnimation(Block block, float delta){
-        batch.draw(block.getDeathAnimation().getKeyFrame(delta,false),block.getBounds().x,block.getBounds().y);
+        batch.draw(block.getDeathAnimation().getKeyFrame(delta,true),block.getBounds().x,block.getBounds().y);
     }
 
     private void drawPlayer(Player player , float delta){
