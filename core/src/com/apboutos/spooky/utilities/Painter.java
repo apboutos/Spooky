@@ -1,11 +1,12 @@
 package com.apboutos.spooky.utilities;
 
+import com.apboutos.spooky.units.Block;
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
-import com.apboutos.spooky.units.enemy.Enemy;
+import com.apboutos.spooky.units.Enemy;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-@SuppressWarnings("unused")
+
 public class Painter {
 
     private final SpriteBatch batch;
@@ -29,14 +30,16 @@ public class Painter {
 
     public void draw(Unit unit, float delta){
 
-        if(unit.isDead()){
+        if(unit.isDying()){
 
             if(unit instanceof Player) drawPlayerSquash((Player) unit);
             if(unit instanceof Enemy) drawEnemySquash((Enemy) unit);
+            if(unit instanceof Block) drawDeadBlockAnimation((Block) unit,delta);
         }
         else {
             if(unit instanceof Player) drawPlayer((Player) unit , delta);
             if(unit instanceof Enemy) drawEnemy((Enemy) unit, delta);
+            if(unit instanceof Block) drawBlock((Block) unit);
         }
 
     }
@@ -49,6 +52,14 @@ public class Painter {
     private void drawEnemySquash(Enemy enemy){
         enemy.getSquash().setBounds(enemy.getBounds().x,enemy.getBounds().y,enemy.getBounds().width,enemy.getBounds().height);
         enemy.getSquash().draw(batch);
+    }
+
+    private void drawBlock(Block block){
+        block.getBlock().draw(batch);
+    }
+
+    private void drawDeadBlockAnimation(Block block, float delta){
+        batch.draw(block.getDeathAnimation().getKeyFrame(delta,false),block.getBounds().x,block.getBounds().y);
     }
 
 
