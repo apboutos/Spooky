@@ -1,24 +1,22 @@
 package com.apboutos.spooky.utilities;
 
 import com.apboutos.spooky.units.Block;
+import com.apboutos.spooky.units.Enemy;
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
-import com.apboutos.spooky.units.Enemy;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import lombok.AllArgsConstructor;
 
-
+@AllArgsConstructor
 public class Painter {
 
     private final SpriteBatch batch;
-
-
-    public Painter(SpriteBatch batch){
-        this.batch = batch;
-    }
-
-
+    private final Camera camera;
 
     public void beginDrawing(){
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
     }
 
@@ -26,7 +24,9 @@ public class Painter {
         batch.end();
     }
 
-
+    public void drawBackground(Sprite background){
+        background.draw(batch);
+    }
 
     public void draw(Unit unit, float delta){
 
@@ -55,13 +55,13 @@ public class Painter {
     }
 
     private void drawBlock(Block block){
+
         block.getBlock().draw(batch);
     }
 
     private void drawDeadBlockAnimation(Block block, float delta){
         batch.draw(block.getDeathAnimation().getKeyFrame(delta,false),block.getBounds().x,block.getBounds().y);
     }
-
 
     private void drawPlayer(Player player , float delta){
 
