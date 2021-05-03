@@ -13,7 +13,7 @@ import com.badlogic.gdx.Screen;
  */
 public class LevelChanger implements Screen{
 
-	private Spooky spooky;
+	private final Spooky spooky;
 	private int level = 1;
 	
 	
@@ -31,7 +31,7 @@ public class LevelChanger implements Screen{
 	@Override
 	public void render(float delta) {
 		
-		if (spooky.level.goToNextLevel == true)
+		if (spooky.level.goToNextLevel)
 		{
 			level++;
 			if (level > 1)
@@ -39,7 +39,7 @@ public class LevelChanger implements Screen{
 				level = 1;
 			}
 		}
-		spooky.level.setLevel(level);
+		spooky.level.setLevelID(level);
 		spooky.setScreen(spooky.level);
 		
 	}
