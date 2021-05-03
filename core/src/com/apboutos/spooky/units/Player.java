@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Time;
+
 
 /**
  * Model class that represents the player's unit.
@@ -52,8 +54,24 @@ public class Player extends Unit{
 
 	}
 
+	public void stop(){
+		isMoving = false;
+	}
+
+	public void kill(){
+		isMoving = false;
+		isDead = true;
+		deathTimerStarted = true;
+		deathTimer = TimeUtils.millis();
+	}
+
+	@Override
 	public boolean isDead(){
 		return isDead && TimeUtils.timeSinceMillis(deathTimer) > 1500;
+	}
+
+	public boolean isDying(){
+		return deathTimerStarted;
 	}
 
 }
