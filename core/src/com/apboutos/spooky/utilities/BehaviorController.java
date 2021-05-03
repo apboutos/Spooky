@@ -1,27 +1,161 @@
 package com.apboutos.spooky.utilities;
 
-import com.apboutos.spooky.units.Unit;
-import com.apboutos.spooky.units.enemy.Enemy;
-import com.apboutos.spooky.units.enemy.Fish;
-import com.apboutos.spooky.units.enemy.Shark;
+import com.apboutos.spooky.effects.SquashStar;
+import com.apboutos.spooky.units.*;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
+import static com.apboutos.spooky.utilities.BlockType.*;
 import static com.apboutos.spooky.utilities.Direction.reverseDirection;
 
 @AllArgsConstructor
 public class BehaviorController {
 
+    private List<SquashStar> stars;
+    private final SpriteBatch batch;
+
     private final CollisionDetector collisionDetector;
 
-    public void determineEnemyBehavior(Unit enemy){
-        if(enemy instanceof Enemy)
-        switch (((Enemy)enemy).getEnemyType()){
-            case Fish: determineFishBehavior((Fish) enemy);
-            case Shark: determineSharkBehavior((Shark) enemy);
+    public void determineUnitBehavior(Unit unit){
+        if(unit instanceof Player){
+            determinePlayerBehavior((Player) unit);
+        }
+        else if(unit instanceof Enemy){
+            determineEnemyBehavior((Enemy) unit);
+        }
+        else{
+            determineBlockBehavior((Block) unit);
         }
     }
 
-    private void determineSharkBehavior(Shark shark){
+
+    private void determinePlayerBehavior(Player player){
+
+       determinePlayerBehaviorOnCollisionWithMap(player);
+
+       determinePlayerBehaviorOnCollisionWithMovingBlockOrEnemyOrExplosion(player);
+    }
+
+    private void determinePlayerBehaviorOnCollisionWithMap(Player player){
+        if(collisionDetector.detectCollisionWithTheMapBorderOnNextMove(player.getBounds(),player.getDirection(),player.getSpeed())){
+            player.stop();
+        }
+    }
+
+    private void determinePlayerBehaviorOnCollisionWithMovingBlockOrEnemyOrExplosion(Player player){
+        if(collisionDetector.detectCollisionWithMovingBlock(player) || collisionDetector.detectCollisionWithEnemy(player) || collisionDetector.detectCollisionWithExplosion(player)){
+            player.kill();
+            stars.add(new SquashStar(player.getBounds().x,player.getBounds().y, StarColor.Yellow,batch));
+        }
+    }
+
+    private void determineBlockBehavior(Block block){
+
+        determineBlockBehaviorOnCollisionWithMap(block);
+
+        determineBlockBehaviorOnCollisionWithStaticBlock(block);
+
+        determineBlockBehaviorOnCollisionWithMovingBlock(block);
+
+        determineBlockBehaviorOnBeingPushed(block);
+    }
+
+    private void determineBlockBehaviorOnBeingPushed(Block block){
+
+        if(blockCanMove(block))
+            block.move();
+        else
+            block.kill();
+    }
+
+    private void determineBlockBehaviorOnCollisionWithStaticBlock(Block block){
+
+        Block objectOfCollision = collisionDetector.detectCollisionWithStaticBlockOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed());
+        if(objectOfCollision != null)
+            switch (block.getType()){
+                case Standard: block.stop(); break;
+                case Dynamite:
+                case BigDynamite: block.explode(); break;
+                case Bouncing:
+                case BigBouncing: block.bounce(); break;
+                case Diamond: if(objectOfCollision.getType() == Diamond) block.merge(); else block.stop(); break;
+            }
+    }
+
+    private void determineBlockBehaviorOnCollisionWithMovingBlock(Block block){
+        if(collisionDetector.detectCollisionWithMovingBlock(block))
+            switch (block.getType()){
+                case Dynamite:
+                case BigDynamite: block.explode(); break;
+                case Standard:
+                case Bouncing:
+                case BigBouncing:
+                case Diamond: block.bounce(); break;
+            }
+    }
+
+    private void determineBlockBehaviorOnCollisionWithMap(Block block){
+        if(collisionDetector.detectCollisionWithTheMapBorderOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed()))
+            switch (block.getType()){
+                case Dynamite:
+                case BigDynamite: block.explode(); break;
+                case Standard:
+                case Diamond: block.stop(); break;
+                case Bouncing:
+                case BigBouncing: block.bounce(); break;
+            }
+    }
+
+    private boolean blockCanMove(Block block){
+        return  !collisionDetector.detectCollisionWithTheMapBorderOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed()) &&
+                collisionDetector.detectCollisionWithStaticBlockOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed()) == null &&
+                !collisionDetector.detectCollisionWithMovingBlock(block);
+    }
+
+    public void determineEnemyBehavior(Enemy enemy){
+
+        determineEnemyBehaviorOnCollisionWihMap(enemy);
+
+        determineEnemyBehaviorOnCollisionWithStaticBlock(enemy);
+
+        determineEnemyBehaviorOnCollisionWithMovingBlockOrExplosion(enemy);
+
+        switch (enemy.getEnemyType()){
+            case Fish: determineFishActions(enemy); break;
+            case Shark: determineSharkActions(enemy); break;
+        }
+    }
+
+    private void determineEnemyBehaviorOnCollisionWihMap(Enemy enemy){
+        if(collisionDetector.detectCollisionWithTheMapBorderOnNextMove(enemy.getBounds(),enemy.getDirection(),enemy.getSpeed())){
+            //System.out.println("enemy collided with border");
+            enemy.stopDueToCollisionWithMap();
+        }
+    }
+
+    private void determineEnemyBehaviorOnCollisionWithStaticBlock(Enemy enemy){
+        Block objectOfCollision = collisionDetector.detectCollisionWithStaticBlockOnNextMove(enemy.getBounds(),enemy.getDirection(),enemy.getSpeed());
+        if( objectOfCollision != null){
+            System.out.println("enemy collided with block");
+            enemy.stopDueToCollisionWithBlock(objectOfCollision);
+        }
+    }
+
+    private void determineEnemyBehaviorOnCollisionWithMovingBlockOrExplosion(Enemy enemy){
+        if(collisionDetector.detectCollisionWithMovingBlock(enemy) || collisionDetector.detectCollisionWithExplosion(enemy) && !enemy.isDeathTimerStarted()){
+            System.out.println("enemy collided with moving");
+            enemy.kill();
+            switch (enemy.getEnemyType()){
+                case Fish:   stars.add(new SquashStar(enemy.getBounds().x,enemy.getBounds().y, StarColor.Blue,batch)); break;
+                case Shark:  stars.add(new SquashStar(enemy.getBounds().x,enemy.getBounds().y, StarColor.Grey,batch)); break;
+            }
+        }
+    }
+
+    //TODO
+    private void determineSharkActions(Enemy shark){
 
     }
 
@@ -32,7 +166,7 @@ public class BehaviorController {
      * <br>3. When the fish collides with a static standard block it has a 50% chance to push it
      *    or a 50% chance to randomly change direction.
      */
-    private void determineFishBehavior(Fish fish){
+    private void determineFishActions(Enemy fish){
 
         fish.setMoving(true);
         if(fish.getNumberOfBlocksMoved()%400 == 0){
@@ -43,7 +177,7 @@ public class BehaviorController {
             fish.setCollidedWithMap(false);
         }
         if(fish.isCollidedWithBlock()){
-            if(fish.getLastBlockCollidedWith().getBlockType() == BlockType.Standard
+            if(fish.getLastBlockCollidedWith().getType() == Standard
                     && !fish.isDeathTimerStarted()
                     && !fish.getLastBlockCollidedWith().isMoving()
                     && produceRandomInRange(0,1) == 0)
@@ -82,12 +216,14 @@ public class BehaviorController {
 
     private boolean enemyCanMoveTowardsDirection(Enemy enemy , Direction direction){
 
-        if(collisionDetector.detectCollisionWithTheMapBorder(enemy.getBounds(),direction,enemy.getSpeed()))
+        if(collisionDetector.detectCollisionWithTheMapBorderOnNextMove(enemy.getBounds(),direction,enemy.getSpeed()))
             return false;
-        if(collisionDetector.detectCollisionWithStaticBlock(enemy.getBounds(),direction,enemy.getSpeed()) != null)
+        if(collisionDetector.detectCollisionWithStaticBlockOnNextMove(enemy.getBounds(),direction,enemy.getSpeed()) != null)
             return false;
         return true;
     }
+
+
 
     public int produceRandomInRange(int start, int end){
         return ((int)Math.round(Math.random()*100))%(end - start + 1) + start;
