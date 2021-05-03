@@ -71,7 +71,7 @@ public class Block extends Unit {
 	}
 
 	public void kill(){
-		if(!deathTimerStarted){
+		if(!this.isDying()){
 			deathTimerStarted = true;
 			deathTimer = TimeUtils.millis();
 			isMoving = false;
@@ -124,7 +124,7 @@ public class Block extends Unit {
 				break;
 			case Diamond:
 				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadStandardBlock.getRegions());
-				block = new Sprite(TextureLoader.dynamiteBlock);
+				block = new Sprite(TextureLoader.diamondBlock);
 				break;
 		}
 	}

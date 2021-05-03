@@ -59,9 +59,11 @@ public class Player extends Unit{
 	}
 
 	public void kill(){
-		isMoving = false;
-		deathTimerStarted = true;
-		deathTimer = TimeUtils.millis();
+		if(!this.isDying()) {
+			isMoving = false;
+			deathTimerStarted = true;
+			deathTimer = TimeUtils.millis();
+		}
 	}
 
 }

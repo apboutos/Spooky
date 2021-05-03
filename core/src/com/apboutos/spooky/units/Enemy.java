@@ -55,9 +55,11 @@ public class Enemy extends Unit {
 	}
 
 	public void kill(){
-		isMoving = false;
-		deathTimerStarted = true;
-		deathTimer = TimeUtils.millis();
+		if(!this.isDying()){
+			deathTimerStarted = true;
+			deathTimer = TimeUtils.millis();
+			isMoving = false;
+		}
 	}
 
 	public void stopDueToCollisionWithMap(){
