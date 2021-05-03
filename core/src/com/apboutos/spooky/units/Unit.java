@@ -24,4 +24,8 @@ public abstract class Unit {
 
     protected boolean deathTimerStarted;
     protected long deathTimer;
+
+    public boolean isDying(){
+        return deathTimerStarted;
+    }
 }
