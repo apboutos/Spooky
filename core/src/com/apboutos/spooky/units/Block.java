@@ -1,22 +1,15 @@
-package com.apboutos.spooky.units.block;
+package com.apboutos.spooky.units;
 
-import com.apboutos.spooky.effects.Explosion;
-import com.apboutos.spooky.units.Unit;
+import com.apboutos.spooky.level.TextureLoader;
 import com.apboutos.spooky.utilities.BlockType;
 import com.apboutos.spooky.utilities.Direction;
 import com.apboutos.spooky.utilities.GameDimensions;
-import com.apboutos.spooky.utilities.Movability;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
 
 /**
  * 
@@ -27,10 +20,142 @@ import java.util.ArrayList;
  * @author Apostolis Boutos
  *
  */
-
-@SuppressWarnings("DuplicatedCode")
+@Setter
+@Getter
 public class Block extends Unit {
 
+	private final BlockType type;
+
+	private Animation<TextureRegion> deathAnimation;
+	private Sprite block;
+	private boolean isSuperDiamond;
+	private int numberOfBounces;
+	private int maxNumberOfBounces;
+
+	public Block(float x, float y, BlockType type){
+
+		bounds.set( x * GameDimensions.unitWidth,
+				    y * GameDimensions.unitHeight,
+				     GameDimensions.unitWidth,
+				     GameDimensions.unitHeight);
+
+		this.type = type;
+		loadTexturesByType();
+		block.setBounds(bounds.x,bounds.y,bounds.width,bounds.height);
+
+		switch (type){
+			case Bouncing: maxNumberOfBounces = 2; break;
+			case BigBouncing: maxNumberOfBounces = 3; break;
+			case Dynamite:
+			case BigDynamite: maxNumberOfBounces = 0; break;
+			default: maxNumberOfBounces = 1; break;
+		}
+	}
+
+	public void explode(){
+
+	}
+
+	public void push(Direction direction){
+		if(!isMoving){
+			this.direction = direction;
+			isPushed = true;
+		}
+	}
+
+	public void move(){
+		if(!isSuperDiamond){
+			isMoving = true;
+		}
+	}
+
+	public void kill(){
+		if(!deathTimerStarted){
+			deathTimerStarted = true;
+			isMoving = false;
+			isDead = true;
+		}
+	}
+
+	public void stop(){
+
+	}
+
+	public void merge(){
+
+	}
+
+	public void bounce(){
+		direction = Direction.reverseDirection(direction);
+	}
+
+	public void makeSuperDiamond(){
+		if(!isSuperDiamond){
+			isSuperDiamond = true;
+			block.setTexture(TextureLoader.superDiamondBlock);
+		}
+	}
+
+	@Override
+	public boolean isDead() {
+		return super.isDead() && TimeUtils.timeSinceMillis(deathTimer) > deathAnimation.getAnimationDuration()*1000;
+	}
+
+	private void loadTexturesByType(){
+		switch (type){
+			case Standard:
+				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadStandardBlock.getRegions());
+				block = new Sprite(TextureLoader.standardBlock);
+				break;
+			case Bouncing:
+				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadBouncingBlock.getRegions());
+				block = new Sprite(TextureLoader.bouncingBlock);
+				break;
+			case BigBouncing:
+				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadBigBouncingBlock.getRegions());
+				block = new Sprite(TextureLoader.bigBouncingBlock);
+				break;
+			case Dynamite:
+				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadDynamiteBlock.getRegions());
+				block = new Sprite(TextureLoader.dynamiteBlock);
+				break;
+			case BigDynamite:
+				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadBigDynamiteBlock.getRegions());
+				block = new Sprite(TextureLoader.bigDynamiteBlock);
+				break;
+			case Diamond:
+				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadStandardBlock.getRegions());
+				block = new Sprite(TextureLoader.dynamiteBlock);
+				break;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*
 	@Setter
 	protected Animation<TextureRegion> deadBlock; // The block's death animation
 	@Setter
@@ -49,12 +174,9 @@ public class Block extends Unit {
 	protected boolean iAmSuper;
 	protected boolean iAmBase;
 	
-	/**
-	 * Constructor
-	 * This constructor initializes only the variables that are common for every block type.
-	 * The other variables must be initialized at the constructor of the class that extends 
-	 * this one.
-	 */
+
+
+
 	public Block(){
 		
 		isMoving = false;
@@ -77,9 +199,7 @@ public class Block extends Unit {
 		
 	}
 	
-	/**
-	 * Destroys the block.
-	 */
+
 	public void kill(){
 		
 		isMoving = false;
@@ -94,19 +214,14 @@ public class Block extends Unit {
 		
 	}
 	
-	/**
-	 * When the player issues a move command this method checks if this block
-	 * is the one the player wanted to push and sets the direction it should be
-	 * moving to. 
-	 * @return A Movability Enumeration.
-	 */
+
 	protected Movability iAmEligibleToMove(){
 				
 			/* When the push command is issued by the player on this block the following
 			   statement checks if the block is eligible to move or if it should be destroyed
-			   instead. 
+			   instead.
 			*/
-			
+			/*
 			if (!isMoving && isPushed)
 			{
 				
@@ -224,11 +339,7 @@ public class Block extends Unit {
 	}
 	
 		
-	/**
-	 * This methods returns true if the block is has collided with a map wall.
-	 * 
-	 * @return boolean
-	 */
+
 	protected boolean iHaveCollidedWithMap(){
 		
 		tmpBounds.setPosition(bounds.x, bounds.y);
@@ -253,12 +364,7 @@ public class Block extends Unit {
 	}
 	
 	
-	/**
-	 * This method returns true if the block has collided with another block
-	 * that is not currently moving.
-	 * 
-	 * @return boolean
-	 */
+
 	protected boolean iHaveCollidedWithBlock(){
 		//Checking if block collides with other blocks.
 		if (direction == Direction.UP)
@@ -291,12 +397,7 @@ public class Block extends Unit {
 	}
 
 	
-	/**
-	 * This method returns true if the block has collided with another block
-	 * that is currently moving.
-	 * 
-	 * @return boolean
-	 */
+
 	protected boolean iHaveCollidedWithMovingBlock(){
 		
 		if (direction == Direction.UP)
@@ -329,12 +430,7 @@ public class Block extends Unit {
 		return false;
 	}
 	
-	/**
-	 * This method returns true if the block has collided with a diamond block
-	 * that is not currently moving.
-	 * 
-	 * @return boolean
-	 */
+
 	protected boolean iHaveCollidedWithDiamondBlock(){
 		
 		if (direction == Direction.UP)
@@ -370,11 +466,7 @@ public class Block extends Unit {
 	
 	
 	
-	/**
-	 * Determines if the block can move towards the specified direction.
-	 *
-	 * @return True if the block is free to move and false otherwise.
-	 */
+
 	public boolean canMove(Direction direction){
 		
 		Rectangle tmpBounds = new Rectangle(bounds.x,bounds.y + speed.y, bounds.width,bounds.height);	
@@ -433,11 +525,7 @@ public class Block extends Unit {
 	
 	
 	
-	/**
-	 *  If the block is moving, this method translates the block's
-	 *  x,y coordinate, according to the block's facing direction and it's
-	 *  speed.
-	 */
+
 	protected void moving(){
 		if (isMoving && !isDead)
 		{
@@ -463,9 +551,7 @@ public class Block extends Unit {
 
 	
 	
-	/**
-	 * Draws the block's various animations on the screen
-	 */
+
 	protected void draw(){
 		block.setPosition(bounds.x, bounds.y);
 		if (isDead)
@@ -483,11 +569,7 @@ public class Block extends Unit {
 			block.draw(batch);
 		}
 	}
-	
-	/**
-	 * Reverses the direction of the block and also the direction of
-	 * the block it has collided with.
-	 */
+
 	protected void bounce(){
 		
 		switch (direction)
@@ -510,22 +592,12 @@ public class Block extends Unit {
 			
 	}
 	
-	/**
-	 * Disposes any resources that were loaded like textures
-	 * and sounds.
-	 */	
 
 	public void dispose(){	
 
 	}	
 	
 	
-	
-	/**
-	 * Returns the block's bounds
-	 * x,y coordinate
-	 * width and height
-	 */	
 
 	public Rectangle getBounds(){
 		return bounds;
@@ -533,31 +605,18 @@ public class Block extends Unit {
 	
 	
 	
-	/**
-	 * Retrieves the ArrayList where all the blocks are stored.
-	 * Each block must have this list in order to be able to do
-	 * collision checks with the other blocks.
-	 */
+
 	public void setBlockList(ArrayList<Block> blockList){
 		this.blockList = blockList;		
 	}
 	
-	/**
-	 * 
-	 * Sets the block's explosion list. Each dynamite block must have
-	 * this list in order to be able to create explosion animations when
-	 * it explodes.
-	 */
+
 	public void setExplosionList(ArrayList<Explosion> explosionList){
 		this.explosionList = explosionList;
 	}
 	
 	
-	/**
-	 * When the block is destroyed this method returns this
-	 * block back to the level, so the level can know which block 
-	 * to remove from it's blockList. 
-	 */
+
 	public Block getDeadBlock()
 	{
 		if (isDead && TimeUtils.timeSinceMillis(deathTimer) > deadBlock.getAnimationDuration()*1000)
@@ -569,20 +628,13 @@ public class Block extends Unit {
 			return null;
 		}
 	}
-	
-	/**
-	 * 
-	 * @return the block's type.
-	 */
+
+
 	public BlockType getBlockType()
 	{
 		return type;
 	}
-	
-	/**
-	 * 
-	 * @return true if the block is moving, false otherwise.
-	 */
+
 	public boolean isMoving()
 	{
 		return this.isMoving;
@@ -590,22 +642,16 @@ public class Block extends Unit {
 	
 
 	
-	/**
-	 * 
-	 * @return the direction the block is facing.
-	 */
+
 	public Direction getDirection()
 	{
 		return direction;
 	}
 
 	
-	/**
-	 * Returns true if the current block is the base of diamond stacking.
-	 * @return boolean
-	 */
+
 	public boolean isBase(){
 		return iAmBase;
 	}
-
+	*/
 }
