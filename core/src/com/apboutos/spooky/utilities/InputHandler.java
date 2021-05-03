@@ -3,7 +3,7 @@ package com.apboutos.spooky.utilities;
 import com.apboutos.spooky.level.Settings;
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
-import com.apboutos.spooky.units.block.Block;
+import com.apboutos.spooky.units.Block;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
