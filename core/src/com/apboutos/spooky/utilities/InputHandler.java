@@ -23,8 +23,9 @@ public class InputHandler {
     private final Camera camera;
     @Setter
     private List<Unit> units;
+    private CollisionDetector collisionDetector;
 
-    public InputHandler(Player player, Camera camera, Boolean gearIsPressed, Settings settings, List<Unit> units){
+    public InputHandler(Player player, Camera camera, Boolean gearIsPressed, Settings settings, List<Unit> units, CollisionDetector collisionDetector){
 
         this.player = player;
         touchCoords = new Vector3();
@@ -32,6 +33,7 @@ public class InputHandler {
         this.settings = settings;
         this.units = units;
         this.camera = camera;
+        this.collisionDetector = collisionDetector;
     }
 
     public void handleInput(){
@@ -113,48 +115,8 @@ public class InputHandler {
     }
 
     private void push(){
-
-        for(Unit unit : units)
-        {
-            // If I don't have this if, the player will be able to push blocks
-            // that are already moving.
-            if(unit instanceof Block && !unit.isMoving())
-            {
-                if (player.getDirection() == Direction.UP)
-                {
-                    if (unit.getBounds().overlaps(new Rectangle(player.getBounds().x, player.getBounds().y + player.getSpeed().y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-                    {
-                        ((Block)unit).push(player.getDirection());
-                        break;
-                    }
-                }
-                else if (player.getDirection() == Direction.DOWN)
-                {
-                    if (unit.getBounds().overlaps(new Rectangle(player.getBounds().x, player.getBounds().y - player.getSpeed().y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-                    {
-                        ((Block)unit).push(player.getDirection());
-                        break;
-                    }
-                }
-                else if (player.getDirection() == Direction.LEFT)
-                {
-                    if (unit.getBounds().overlaps(new Rectangle(player.getBounds().x - player.getSpeed().x, player.getBounds().y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-                    {
-                        ((Block)unit).push(player.getDirection());
-                        break;
-                    }
-                }
-                else if (player.getDirection() == Direction.RIGHT)
-                {
-                    if (unit.getBounds().overlaps(new Rectangle(player.getBounds().x + player.getSpeed().x, player.getBounds().y, GameDimensions.unitWidth, GameDimensions.unitHeight)))
-                    {
-                        ((Block)unit).push(player.getDirection());
-                        break;
-                    }
-                }
-            }
-        }
-
+        Block objectOfCollision = collisionDetector.detectCollisionWithStaticBlockOnNextMove(player.getBounds(),player.getDirection(),player.getSpeed());
+        if (objectOfCollision !=null)
+            objectOfCollision.push(player.getDirection());
     }
-
 }
