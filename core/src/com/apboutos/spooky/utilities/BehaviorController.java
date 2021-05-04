@@ -23,7 +23,7 @@ public class BehaviorController {
             determinePlayerBehavior((Player) unit);
         }
         else if(unit instanceof Enemy){
-            determineEnemyBehavior((Enemy) unit);
+            //determineEnemyBehavior((Enemy) unit);
         }
         else{
             determineBlockBehavior((Block) unit);
@@ -35,44 +35,59 @@ public class BehaviorController {
 
        determinePlayerBehaviorOnCollisionWithMap(player);
 
+       determinePlayerBehaviorOnCollisionWithStaticBlock(player);
+
        determinePlayerBehaviorOnCollisionWithMovingBlockOrEnemyOrExplosion(player);
     }
 
     private void determinePlayerBehaviorOnCollisionWithMap(Player player){
         if(collisionDetector.detectCollisionWithTheMapBorderOnNextMove(player.getBounds(),player.getDirection(),player.getSpeed())){
+            System.out.println("Collided with map");
+            player.stop();
+        }
+    }
+
+    private void determinePlayerBehaviorOnCollisionWithStaticBlock(Player player){
+        if(collisionDetector.detectCollisionWithStaticBlockOnNextMove(player.getBounds(),player.getDirection(),player.getSpeed()) != null){
             player.stop();
         }
     }
 
     private void determinePlayerBehaviorOnCollisionWithMovingBlockOrEnemyOrExplosion(Player player){
         if(collisionDetector.detectCollisionWithMovingBlock(player) || collisionDetector.detectCollisionWithEnemy(player) || collisionDetector.detectCollisionWithExplosion(player)){
-            player.kill();
-            stars.add(new SquashStar(player.getBounds().x,player.getBounds().y, StarColor.Yellow,batch));
+            if(!player.isDying())
+                stars.add(new SquashStar(player.getBounds().x,player.getBounds().y, StarColor.Yellow,batch));
+            //if(!player.isDying())
+                player.kill();
         }
     }
 
     private void determineBlockBehavior(Block block){
 
-        determineBlockBehaviorOnCollisionWithMap(block);
+            determineBlockBehaviorOnBeingPushed(block);
 
-        determineBlockBehaviorOnCollisionWithStaticBlock(block);
+            determineBlockBehaviorOnCollisionWithMap(block);
 
-        determineBlockBehaviorOnCollisionWithMovingBlock(block);
+            determineBlockBehaviorOnCollisionWithStaticBlock(block);
 
-        determineBlockBehaviorOnBeingPushed(block);
+            determineBlockBehaviorOnCollisionWithMovingBlock(block);
+
     }
 
     private void determineBlockBehaviorOnBeingPushed(Block block){
 
-        if(blockCanMove(block))
-            block.move();
-        else
-            block.kill();
+            if(block.isPushed()){
+                if(blockCanMove(block))
+                    block.move();
+                else
+                    block.kill();
+
+                block.setPushed(false);
+            }
     }
 
     private void determineBlockBehaviorOnCollisionWithStaticBlock(Block block){
-
-        Block objectOfCollision = collisionDetector.detectCollisionWithStaticBlockOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed());
+        Block objectOfCollision = collisionDetector.detectCollisionWithStaticBlockOnNextMove(block);
         if(objectOfCollision != null)
             switch (block.getType()){
                 case Standard: block.stop(); break;
@@ -85,15 +100,8 @@ public class BehaviorController {
     }
 
     private void determineBlockBehaviorOnCollisionWithMovingBlock(Block block){
-        if(collisionDetector.detectCollisionWithMovingBlock(block))
-            switch (block.getType()){
-                case Dynamite:
-                case BigDynamite: block.explode(); break;
-                case Standard:
-                case Bouncing:
-                case BigBouncing:
-                case Diamond: block.bounce(); break;
-            }
+        if(collisionDetector.detectCollisionWithMovingBlockOnNextMove(block) != null)
+            block.freeBounce();
     }
 
     private void determineBlockBehaviorOnCollisionWithMap(Block block){
@@ -110,8 +118,8 @@ public class BehaviorController {
 
     private boolean blockCanMove(Block block){
         return  !collisionDetector.detectCollisionWithTheMapBorderOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed()) &&
-                collisionDetector.detectCollisionWithStaticBlockOnNextMove(block.getBounds(),block.getDirection(),block.getSpeed()) == null &&
-                !collisionDetector.detectCollisionWithMovingBlock(block);
+                collisionDetector.detectCollisionWithStaticBlockOnNextMove(block) == null; //&&
+                //collisionDetector.detectCollisionWithMovingBlockOnNextMove(block) == null;
     }
 
     public void determineEnemyBehavior(Enemy enemy){
