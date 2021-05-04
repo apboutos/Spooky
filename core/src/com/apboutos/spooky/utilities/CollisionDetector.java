@@ -58,7 +58,22 @@ public class CollisionDetector {
             case RIGHT: boundsOnNextMove.setPosition(bounds.x  + speed.x,bounds.y); break;
         }
         for(Unit i : units){
-            if(i instanceof Block && !i.isDead() && boundsOnNextMove.overlaps(i.getBounds()))
+            if(i instanceof Block && boundsOnNextMove.overlaps(i.getBounds()) && !i.isMoving())
+                return (Block) i;
+        }
+        return null;
+    }
+
+    public Block detectCollisionWithStaticBlockOnNextMove(Unit unit){
+        Rectangle boundsOnNextMove = new Rectangle(0,0,unit.getBounds().width,unit.getBounds().height);
+        switch (unit.getDirection()){
+            case    UP: boundsOnNextMove.setPosition(unit.getBounds().x,unit.getBounds().y + unit.getSpeed().y); break;
+            case  DOWN: boundsOnNextMove.setPosition(unit.getBounds().x,unit.getBounds().y - unit.getSpeed().y); break;
+            case  LEFT: boundsOnNextMove.setPosition(unit.getBounds().x  - unit.getSpeed().x,unit.getBounds().y); break;
+            case RIGHT: boundsOnNextMove.setPosition(unit.getBounds().x  + unit.getSpeed().x,unit.getBounds().y); break;
+        }
+        for(Unit i : units){
+            if(i instanceof Block && boundsOnNextMove.overlaps(i.getBounds()) && !i.equals(unit) && !i.isMoving())
                 return (Block) i;
         }
         return null;
@@ -79,6 +94,15 @@ public class CollisionDetector {
             }
         }
         return false;
+    }
+
+    public Block detectCollisionWithMovingBlockOnNextMove(Unit unit){
+        for(Unit i : units){
+            if(i instanceof Block && i.isMoving() && unit.getBounds().overlaps(i.getBounds())&& !unit.equals(i)){
+                return (Block) i;
+            }
+        }
+        return null;
     }
 
     public boolean detectCollisionWithExplosion(Unit unit){
