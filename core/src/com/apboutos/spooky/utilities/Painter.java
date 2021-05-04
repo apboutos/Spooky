@@ -60,7 +60,7 @@ public class Painter {
     }
 
     private void drawDeadBlockAnimation(Block block, float delta){
-        batch.draw(block.getDeathAnimation().getKeyFrame(delta,true),block.getBounds().x,block.getBounds().y);
+        batch.draw(block.getDeathAnimation().getKeyFrame(delta,false),block.getBounds().x,block.getBounds().y);
     }
 
     private void drawPlayer(Player player , float delta){
