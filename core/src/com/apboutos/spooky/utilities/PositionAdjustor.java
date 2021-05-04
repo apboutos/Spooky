@@ -1,5 +1,6 @@
 package com.apboutos.spooky.utilities;
 
+import com.apboutos.spooky.units.Block;
 import com.apboutos.spooky.units.Enemy;
 import com.apboutos.spooky.units.Unit;
 
@@ -12,22 +13,22 @@ public class PositionAdjustor {
                 case UP:
                     unit.getBounds().y += unit.getSpeed().y;
                     if ((int) unit.getBounds().y % GameDimensions.unitHeight == 0)
-                        unit.setMoving(false);
+                        if(!(unit instanceof Block))unit.setMoving(false);
                     break;
                 case DOWN:
                     unit.getBounds().y -= unit.getSpeed().y;
                     if ((int) unit.getBounds().y % GameDimensions.unitHeight == 0)
-                        unit.setMoving(false);
+                        if(!(unit instanceof Block))unit.setMoving(false);
                     break;
                 case LEFT:
                     unit.getBounds().x -= unit.getSpeed().x;
                     if ((int) unit.getBounds().x % GameDimensions.unitWidth == 0)
-                        unit.setMoving(false);
+                        if(!(unit instanceof Block))unit.setMoving(false);
                     break;
                 case RIGHT:
                     unit.getBounds().x += unit.getSpeed().x;
                     if ((int) unit.getBounds().x % GameDimensions.unitWidth == 0)
-                        unit.setMoving(false);
+                        if(!(unit instanceof Block))unit.setMoving(false);
                     break;
             }
             if (unit instanceof Enemy)
