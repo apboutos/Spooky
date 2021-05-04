@@ -24,7 +24,7 @@ public abstract class Unit {
 
     protected boolean deathTimerStarted = false;
     protected long deathTimer = 0;
-    protected long deathDuration;
+    protected float deathDuration;
 
     public boolean isDead(){
         return deathTimerStarted && TimeUtils.timeSinceMillis(deathTimer) > deathDuration;
