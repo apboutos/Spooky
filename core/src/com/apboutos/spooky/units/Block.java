@@ -15,9 +15,7 @@ import lombok.Setter;
 
 /**
  * 
- * This is the base class of every block in the game. It only contains variables and
- * methods that are the same in every block type. All block classes must inherit this
- * base class.
+ * Model class representing a Block. Contains only the Block's state and method for changing that state.
  * 
  * @author Apostolis Boutos
  *
@@ -57,6 +55,10 @@ public class Block extends Unit {
 		}
 	}
 
+	/**
+	 * Marks the Block as pushed, triggering the respective Block behavior.
+	 * @param direction The Direction the Block is being push towards.
+	 */
 	public void push(Direction direction){
 		if(!isMoving && !isPushed){
 			this.direction = direction;
@@ -64,13 +66,21 @@ public class Block extends Unit {
 		}
 	}
 
-
+	/**
+	 * Marks this Block as moving. A moving Block will have it's position automatically changed according to it's speed
+	 * and will appear as moving on the screen. Blocks that are marked as Super Diamonds cannot move.
+	 */
 	public void move(){
 		if(!isSuperDiamond){
 			isMoving = true;
 		}
 	}
 
+	/**
+	 * Marks this Block as dying. When a Block is dying it's death animation is drawn and it no longer moves or takes
+	 * part in collision detections. The Block will be removed from the unit list when it's death animation has ended
+	 * and it is marked as dead. A Block of type Diamond cannot be marked as dying.
+	 */
 	public void kill(){
 		if(!this.isDying() && type != BlockType.Diamond){
 			deathTimerStarted = true;
@@ -80,21 +90,34 @@ public class Block extends Unit {
 		}
 	}
 
+	/**
+	 * Marks this Block as stopped. A stopped Block no longer has it's position changed automatically by it's speed and
+	 * therefore will not move on the screen.
+	 */
 	public void stop(){
 		isMoving = false;
 		isPushed = false;
 	}
 
 	//TODO This needs to be implemented.
+	/**
+	 * Merges this Block with another diamond Block. This Block is marked as a Super Diamond from now on.
+	 */
 	public void merge(){
 
 	}
 
+	/**
+	 * Tells the Block to bounce. A Block that bounces has it's direction reversed. This bounce action does not consume
+	 * the block's bounce actions.
+	 */
 	public void freeBounce(){
 		direction = Direction.reverseDirection(direction);
 	}
 
-
+	/**
+	 * Tells the Block to bounce if it has bounce actions left. A Block that bounces has it's direction reversed.
+	 */
 	public void bounce(){
 		if(numberOfBounces < maxNumberOfBounces){
 		System.out.println("Block type: " + type + " numberOfBounces = " + numberOfBounces + " maxNumberOfBounces = " + maxNumberOfBounces );
@@ -106,6 +129,10 @@ public class Block extends Unit {
 		}
 	}
 
+	/**
+	 * Marks this Block as a SuperDiamond. A Super Diamond cannot be killed or moved awards the Player an extra life
+	 * if it exists when the level ends.
+	 */
 	public void makeSuperDiamond(){
 		if(!isSuperDiamond){
 			isSuperDiamond = true;
@@ -113,6 +140,9 @@ public class Block extends Unit {
 		}
 	}
 
+	/**
+	 * Load's the Block's textures and animations by it's BlockType.
+	 */
 	private void loadTexturesByType(){
 		switch (type){
 			case Standard:
