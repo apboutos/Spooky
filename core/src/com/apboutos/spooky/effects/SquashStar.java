@@ -19,7 +19,7 @@ import com.apboutos.spooky.utilities.StarColor;
  * @author exophrenik
  *
  */
-public class SquashStar {
+public class SquashStar extends Effect{
 
 	private float originX; //The original horizontal coordinate of the stars. This is the vertical coordinate where the unit died.
 	private float originY; //The original vertical coordinate of the starts.
