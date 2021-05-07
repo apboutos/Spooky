@@ -54,10 +54,19 @@ public class Player extends Unit{
 
 	}
 
+	/**
+	 * Marks this Player as stopped. A stopped Player no longer has it's position changed automatically by it's speed and
+	 * therefore will not move on the screen.
+	 */
 	public void stop(){
 		isMoving = false;
 	}
 
+	/**
+	 * Marks this Player as dying. When a Player is dying it's death animation is drawn and it no longer moves or takes
+	 * part in collision detections. The Player will be removed from the unit list when it's death animation has ended
+	 * and it is marked as dead.
+	 */
 	public void kill(){
 		if(!this.isDying()) {
 			isMoving = false;
