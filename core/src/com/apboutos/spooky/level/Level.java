@@ -1,23 +1,20 @@
 package com.apboutos.spooky.level;
 
 import com.apboutos.spooky.boot.Spooky;
-import com.apboutos.spooky.effects.SquashStar;
-import com.apboutos.spooky.units.block.Block;
-import com.apboutos.spooky.units.enemy.Enemy;
-import com.apboutos.spooky.utilities.*;
 import com.apboutos.spooky.effects.Explosion;
+import com.apboutos.spooky.effects.SquashStar;
+import com.apboutos.spooky.units.Enemy;
 import com.apboutos.spooky.units.Player;
 import com.apboutos.spooky.units.Unit;
-import com.apboutos.spooky.units.block.Standard;
-import com.apboutos.spooky.units.enemy.Fish;
+import com.apboutos.spooky.utilities.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Level implements Screen {
@@ -25,42 +22,34 @@ public class Level implements Screen {
 	private final Spooky spooky; // The main class, passed in to enable screen swapping from inside the level.
 	private Player player; // The player.
 	private List<Unit> units;
-	private final ArrayList<Block> blockList; // The ArrayList where every alive Block in the level is stored.
-	private final ArrayList<Enemy> enemyList; // The ArrayList where every alive enemy in the level is stored.
+
 	private final ArrayList<SquashStar> squashList; // The ArrayList where every alive squash star is stored.
 	private final ArrayList<Explosion> explosionList; // The ArrayList where every explosion animation is stored.
 	private final Interface gameHud; // The user's interface
-	
-	private Block tmpBlock; // A temporary Block object, used for removing Blocks from the blockList.
-	private Enemy tmpEnemy; // A temporary Enemy object, used for removing Enemies from the enemyList.
+
 	private SquashStar tmpStar; // A temporary SquashStar object, used for removing SquashStars from the squashList.
 	private Explosion tmpExplosion;
 	private float deltaTime = 0; // The time passed between frames. It is used for animations.
 	private Boolean gearIsPressed = false; // Whether the settings gear inside the level's interface is pressed.
 	public boolean goToNextLevel = false; // Flag that signals the level change.
-	private int level=1; //The level's number i.e. 1 for the first level, 2 for the second and so on.
+	private int levelID =1; //The level's number i.e. 1 for the first level, 2 for the second and so on.
 	private final PlayerInfo playerInfo; //The player's information like lives, score etc.
 	private Sprite background;
+
+	private long enemiesAliveInLevel;
 
 	private InputHandler inputHandler;
 	private CollisionDetector collisionDetector;
 	private PositionAdjustor positionAdjustor;
 	private Painter painter;
+	private BehaviorController behaviorController;
 	
 	public Level(Spooky spooky){		
 		this.spooky = spooky;
 
-		blockList = new ArrayList<>();
-		enemyList = new ArrayList<>();
 		squashList = new ArrayList<>();
 		explosionList = new ArrayList<>();
 
-
-		//units.add(player);
-
-
-		tmpBlock = new Standard(0, 0, null,BlockType.Standard);
-		tmpEnemy = new Fish(0, 0, null,EnemyType.Fish);
 		tmpStar = new SquashStar(0,0,null,null);
 		tmpExplosion = new Explosion(0,0,spooky.batch);
 		gameHud = new Interface(spooky.batch);
@@ -72,113 +61,70 @@ public class Level implements Screen {
 	public void show() {
 		
 		//Initialize all the units of the level.
-		units = LevelInitializer.initializeUnits(level,spooky);
-		collisionDetector = new CollisionDetector(units,squashList,explosionList, spooky.batch);
+		units = LevelInitializer.initializeUnits(levelID);
+		enemiesAliveInLevel = units.stream().filter(unit -> unit instanceof Enemy).count();
+
+		collisionDetector = new CollisionDetector(units,explosionList);
 		
 		background = new Sprite(TextureLoader.bubblesBackground);
 		background.setBounds(-540, -360, 1080, 720);
 
-		for (Unit unit : units){
-			if (unit instanceof Block){
-				blockList.add((Block)unit);
-			}
-			else if (unit instanceof Enemy){
-				enemyList.add((Enemy) unit);
-			}
-		}
-
 		player = new Player(-7, -5);
+		units.add(player);
 
-		inputHandler = new InputHandler(player, spooky.camera, gearIsPressed,spooky.settingsScreen.getSettings(),units);
+		inputHandler = new InputHandler(player, spooky.camera, gearIsPressed,spooky.settingsScreen.getSettings(),units,collisionDetector);
 		positionAdjustor = new PositionAdjustor();
-		painter = new Painter(spooky.batch);
+		painter = new Painter(spooky.batch, spooky.camera);
+		behaviorController = new BehaviorController(squashList, spooky.batch, collisionDetector);
 		goToNextLevel = false;
 
-		for (Block i : blockList)
-		{
-			i.setBlockList(blockList);
-			i.setExplosionList(explosionList);
-		}
-		for (Enemy i : enemyList)
-		{
-			i.setBlockList(blockList);
-			i.setSquashList(squashList);
-			i.setExplosionList(explosionList);
-		}
-		
-		if (level == 1)
+		if (levelID == 1)
 		{
 			playerInfo.setLives(3);
 			playerInfo.setScore(0);
 			playerInfo.resetExtra();
 		}
 		playerInfo.setTimeLeft(4000);
-		
+		System.out.println("Unit list has " + units.size() + " units");
 	}
 
 	
 	@Override
 	public void render(float delta) {
-		
-		
+		//System.out.println("Unit list has " + units.size() + " units");
 		deltaTime += delta; // Counting time passed between frames.
 				
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		painter.beginDrawing();
+
 		inputHandler.handleInput();
 
-
-
-
-		spooky.batch.setProjectionMatrix(spooky.camera.combined);
-		spooky.batch.begin();
-		
 		if (gearIsPressed)
 		{
 			gearIsPressed = spooky.settingsScreen.update();
 		}
 		else
 		{
-			
-			background.draw(spooky.batch);
 			gameHud.update(); // Updates the game's hud
 
-			collisionDetector.detectCollision(player);
-			positionAdjustor.adjustPosition(player);
-			painter.draw(player,deltaTime);
+			painter.drawBackground(background);
 
-			
-			for (Block i : blockList) // Updates all the blocks
-			{
-				
-				i.update();
-				if (i.getDeadBlock() != null)
-				{
-					tmpBlock = i;
-				}
-			}
-			
-			if (tmpBlock.getDeadBlock() != null)
-			{
-				blockList.remove(tmpBlock);
-				tmpBlock.dispose();
-			}
-			
-			for (Enemy i : enemyList) // Updates all the enemies
-			{
-				i.update(deltaTime);
-				if (i.getDeadEnemy() != null)
-				{
-					tmpEnemy = i;
-				}
-			}
-			if (tmpEnemy.getDeadEnemy() != null)
-			{
-				enemyList.remove(tmpEnemy);
-				tmpEnemy.dispose();	
-			}
-			
+			units.forEach(behaviorController::determineUnitBehavior);
+
+			units.forEach(positionAdjustor::adjustPosition);
+
+			units.forEach(unit-> painter.draw(unit,deltaTime));
+
+			units = units.stream().filter(unit -> !unit.isDead()).collect(Collectors.toList());
+
+			enemiesAliveInLevel = units.stream().filter(unit -> unit instanceof Enemy).count();
+
+			updateUnitListReference(units);
+
+
+
 			for (Explosion i: explosionList)//Updates all the explosions.
 			{
 				i.update();
@@ -209,7 +155,7 @@ public class Level implements Screen {
 			
 			
 		}			
-		spooky.batch.end();
+		painter.endDrawing();
 		
 		if (player.isDead())
 		{
@@ -217,7 +163,7 @@ public class Level implements Screen {
 			spooky.setScreen(spooky.mainmenu);
 		}
 		
-		if (enemyList.size() == 0 && !player.isDead())
+		if (enemiesAliveInLevel == 0 && !player.isDead())
 		{
 			System.out.println("go to next level");
 			goToNextLevel = true;
@@ -249,22 +195,11 @@ public class Level implements Screen {
 	
 	@Override
 	public void hide() {
-		
-		enemyList.clear();
-		blockList.clear();
+
 		squashList.clear();
 		explosionList.clear();
 		//gamehud.dispose();
-		tmpBlock.dispose();
-		
-		for (Block i : blockList)
-		{
-			i.dispose();
-		}
-		for (Enemy i : enemyList)
-		{
-			i.dispose();
-		}
+
 	}
 
 	
@@ -274,11 +209,20 @@ public class Level implements Screen {
 	}
 
     
-    public void setLevel(int level) {
-		this.level = level;
+    public void setLevelID(int levelID) {
+		this.levelID = levelID;
 	}
-    
-    
+
+	/**
+	 *  Java uses call by value on objects therefore when you pass a list to an object
+	 *  and afterwards you assign a new list to that variable, the object still has the old list.
+	 *  Since I'm using streams to clear the dead units from the unit list this method must be
+	 *  called so all the objects that depend on the list have the renewed list reference.
+	 */
+	private void updateUnitListReference(List<Unit> units){
+		inputHandler.setUnits(units);
+		collisionDetector.setUnits(units);
+	}
     
     
 }//Class end.
