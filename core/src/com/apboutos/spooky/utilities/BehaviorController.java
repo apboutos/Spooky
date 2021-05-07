@@ -66,12 +66,14 @@ public class BehaviorController {
 
             determineBlockBehaviorOnBeingPushed(block);
 
-            determineBlockBehaviorOnCollisionWithMap(block);
+            if(block.isMoving()){
 
-            determineBlockBehaviorOnCollisionWithStaticBlock(block);
+                determineBlockBehaviorOnCollisionWithMap(block);
 
-            determineBlockBehaviorOnCollisionWithMovingBlock(block);
+                determineBlockBehaviorOnCollisionWithStaticBlock(block);
 
+                determineBlockBehaviorOnCollisionWithMovingBlock(block);
+            }
     }
 
     private void determineBlockBehaviorOnBeingPushed(Block block){

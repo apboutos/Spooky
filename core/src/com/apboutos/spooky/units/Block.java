@@ -42,15 +42,15 @@ public class Block extends Unit {
 		block.setBounds(bounds.x,bounds.y,bounds.width,bounds.height);
 		speed = Speed.BLOCK_SPEED;
 		switch (type){
-			case Bouncing: maxNumberOfBounces = 2; break;
-			case BigBouncing: maxNumberOfBounces = 3; break;
-			case Dynamite:
-			case BigDynamite: maxNumberOfBounces = 0; break;
-			default: maxNumberOfBounces = 1; break;
+			case Bouncing: maxNumberOfBounces = 1; break;
+			case BigBouncing: maxNumberOfBounces = 2; break;
+			default: maxNumberOfBounces = 0; break;
 		}
-		deathDuration = (long)deathAnimation.getAnimationDuration()*1000;
+		numberOfBounces = 0;
+		deathDuration = deathAnimation.getAnimationDuration()*1000;
 	}
 
+	//TODO This needs work.
 	public void explode(){
 		if(type == BlockType.Dynamite || type == BlockType.BigDynamite){
 			kill();
@@ -58,11 +58,12 @@ public class Block extends Unit {
 	}
 
 	public void push(Direction direction){
-		if(!isMoving){
+		if(!isMoving && !isPushed){
 			this.direction = direction;
 			isPushed = true;
 		}
 	}
+
 
 	public void move(){
 		if(!isSuperDiamond){
@@ -71,25 +72,37 @@ public class Block extends Unit {
 	}
 
 	public void kill(){
-		if(!this.isDying()){
+		if(!this.isDying() && type != BlockType.Diamond){
 			deathTimerStarted = true;
 			deathTimer = TimeUtils.millis();
 			isMoving = false;
+			isPushed = false;
 		}
 	}
 
 	public void stop(){
 		isMoving = false;
+		isPushed = false;
 	}
 
+	//TODO This needs to be implemented.
 	public void merge(){
 
 	}
 
+	public void freeBounce(){
+		direction = Direction.reverseDirection(direction);
+	}
+
+
 	public void bounce(){
-		if(numberOfBounces < maxNumberOfBounces) {
+		if(numberOfBounces < maxNumberOfBounces){
+		System.out.println("Block type: " + type + " numberOfBounces = " + numberOfBounces + " maxNumberOfBounces = " + maxNumberOfBounces );
 			direction = Direction.reverseDirection(direction);
 			numberOfBounces++;
+		}else{
+			stop();
+			numberOfBounces = 0;
 		}
 	}
 
@@ -103,27 +116,27 @@ public class Block extends Unit {
 	private void loadTexturesByType(){
 		switch (type){
 			case Standard:
-				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadStandardBlock.getRegions());
+				deathAnimation = new Animation<>(1 / 30f, TextureLoader.deadStandardBlock.getRegions());
 				block = new Sprite(TextureLoader.standardBlock);
 				break;
 			case Bouncing:
-				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadBouncingBlock.getRegions());
+				deathAnimation = new Animation<>(1 / 30f, TextureLoader.deadBouncingBlock.getRegions());
 				block = new Sprite(TextureLoader.bouncingBlock);
 				break;
 			case BigBouncing:
-				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadBigBouncingBlock.getRegions());
+				deathAnimation = new Animation<>(1 / 30f, TextureLoader.deadBigBouncingBlock.getRegions());
 				block = new Sprite(TextureLoader.bigBouncingBlock);
 				break;
 			case Dynamite:
-				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadDynamiteBlock.getRegions());
+				deathAnimation = new Animation<>(1 / 30f, TextureLoader.deadDynamiteBlock.getRegions());
 				block = new Sprite(TextureLoader.dynamiteBlock);
 				break;
 			case BigDynamite:
-				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadBigDynamiteBlock.getRegions());
+				deathAnimation = new Animation<>(1 / 30f, TextureLoader.deadBigDynamiteBlock.getRegions());
 				block = new Sprite(TextureLoader.bigDynamiteBlock);
 				break;
 			case Diamond:
-				deathAnimation = new Animation<>(1 / 10f, TextureLoader.deadStandardBlock.getRegions());
+				deathAnimation = new Animation<>(1 / 30f, TextureLoader.deadStandardBlock.getRegions());
 				block = new Sprite(TextureLoader.diamondBlock);
 				break;
 		}
