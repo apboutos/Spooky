@@ -1,6 +1,7 @@
 package com.apboutos.spooky.level;
 
 import com.apboutos.spooky.boot.Spooky;
+import com.apboutos.spooky.effects.Effect;
 import com.apboutos.spooky.effects.Explosion;
 import com.apboutos.spooky.effects.SquashStar;
 import com.apboutos.spooky.units.Enemy;
@@ -22,13 +23,10 @@ public class Level implements Screen {
 	private final Spooky spooky; // The main class, passed in to enable screen swapping from inside the level.
 	private Player player; // The player.
 	private List<Unit> units;
+	private List<Effect> effects;
 
-	private final ArrayList<SquashStar> squashList; // The ArrayList where every alive squash star is stored.
-	private final ArrayList<Explosion> explosionList; // The ArrayList where every explosion animation is stored.
 	private final Interface gameHud; // The user's interface
 
-	private SquashStar tmpStar; // A temporary SquashStar object, used for removing SquashStars from the squashList.
-	private Explosion tmpExplosion;
 	private float deltaTime = 0; // The time passed between frames. It is used for animations.
 	private Boolean gearIsPressed = false; // Whether the settings gear inside the level's interface is pressed.
 	public boolean goToNextLevel = false; // Flag that signals the level change.
@@ -47,11 +45,6 @@ public class Level implements Screen {
 	public Level(Spooky spooky){		
 		this.spooky = spooky;
 
-		squashList = new ArrayList<>();
-		explosionList = new ArrayList<>();
-
-		tmpStar = new SquashStar(0,0,null,null);
-		tmpExplosion = new Explosion(0,0,spooky.batch);
 		gameHud = new Interface(spooky.batch);
 
 		playerInfo = new PlayerInfo();
@@ -64,7 +57,7 @@ public class Level implements Screen {
 		units = LevelInitializer.initializeUnits(levelID);
 		enemiesAliveInLevel = units.stream().filter(unit -> unit instanceof Enemy).count();
 
-		collisionDetector = new CollisionDetector(units,explosionList);
+		collisionDetector = new CollisionDetector(units,effects);
 		
 		background = new Sprite(TextureLoader.bubblesBackground);
 		background.setBounds(-540, -360, 1080, 720);
@@ -75,7 +68,7 @@ public class Level implements Screen {
 		inputHandler = new InputHandler(player, spooky.camera, gearIsPressed,spooky.settingsScreen.getSettings(),units,collisionDetector);
 		positionAdjustor = new PositionAdjustor();
 		painter = new Painter(spooky.batch, spooky.camera);
-		behaviorController = new BehaviorController(squashList, spooky.batch, collisionDetector);
+		behaviorController = new BehaviorController(effects, spooky.batch, collisionDetector);
 		goToNextLevel = false;
 
 		if (levelID == 1)
@@ -123,37 +116,6 @@ public class Level implements Screen {
 
 			updateUnitListReference(units);
 
-
-
-			for (Explosion i: explosionList)//Updates all the explosions.
-			{
-				i.update();
-				if(i.getDeadExplosion() != null)
-				{
-					tmpExplosion = i;
-				}
-			}
-			if (tmpExplosion.getDeadExplosion() != null)
-			{
-				explosionList.remove(tmpExplosion);
-				tmpExplosion.dispose();	
-			}
-			
-			for (SquashStar i: squashList)// Updates all the squash stars.
-			{
-				i.update(delta);
-				if (i.getDeadSquashStar() != null)
-				{
-					tmpStar = i;	
-				}
-			}
-			if (tmpStar.getDeadSquashStar() != null)
-			{
-				squashList.remove(tmpStar);
-				tmpStar.dispose();
-			}
-			
-			
 		}			
 		painter.endDrawing();
 		
@@ -195,10 +157,6 @@ public class Level implements Screen {
 	
 	@Override
 	public void hide() {
-
-		squashList.clear();
-		explosionList.clear();
-		//gamehud.dispose();
 
 	}
 

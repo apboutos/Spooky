@@ -1,26 +1,23 @@
 package com.apboutos.spooky.utilities;
 
+import com.apboutos.spooky.effects.Effect;
 import com.apboutos.spooky.effects.Explosion;
 import com.apboutos.spooky.units.Block;
 import com.apboutos.spooky.units.Enemy;
 import com.apboutos.spooky.units.Unit;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
+@AllArgsConstructor
+@Setter
 public class CollisionDetector {
 
-    private final List<Explosion> explosions;
-
-    @Setter
     private List<Unit> units;
-
-    public CollisionDetector(List<Unit> units,List<Explosion> explosions){
-        this.units = units;
-        this.explosions = explosions;
-    }
+    private List<Effect> effects;
 
     @SuppressWarnings("RedundantIfStatement")
     public boolean detectCollisionWithTheMapBorderOnNextMove(Rectangle bounds, Direction direction, Vector2 speed){
@@ -106,8 +103,9 @@ public class CollisionDetector {
     }
 
     public boolean detectCollisionWithExplosion(Unit unit){
-        for (Explosion explosion : explosions){
-            if(unit.getBounds().overlaps(explosion.getBounds()) && !unit.isDead())
+        for (Effect explosion : effects){
+            if(explosion instanceof Explosion)
+            if(unit.getBounds().overlaps(((Explosion)explosion).getBounds()) && !unit.isDead())
                 return true;
         }
         return false;

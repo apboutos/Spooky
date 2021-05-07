@@ -1,5 +1,6 @@
 package com.apboutos.spooky.utilities;
 
+import com.apboutos.spooky.effects.Effect;
 import com.apboutos.spooky.effects.SquashStar;
 import com.apboutos.spooky.units.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,7 +14,7 @@ import static com.apboutos.spooky.utilities.Direction.reverseDirection;
 @AllArgsConstructor
 public class BehaviorController {
 
-    private List<SquashStar> stars;
+    private List<Effect> effects;
     private final SpriteBatch batch;
 
     private final CollisionDetector collisionDetector;
@@ -56,7 +57,7 @@ public class BehaviorController {
     private void determinePlayerBehaviorOnCollisionWithMovingBlockOrEnemyOrExplosion(Player player){
         if(collisionDetector.detectCollisionWithMovingBlock(player) || collisionDetector.detectCollisionWithEnemy(player) || collisionDetector.detectCollisionWithExplosion(player)){
             if(!player.isDying())
-                stars.add(new SquashStar(player.getBounds().x,player.getBounds().y, StarColor.Yellow,batch));
+                effects.add(new SquashStar(player.getBounds().x,player.getBounds().y, StarColor.Yellow,batch));
             //if(!player.isDying())
                 player.kill();
         }
@@ -158,8 +159,8 @@ public class BehaviorController {
             System.out.println("enemy collided with moving");
             enemy.kill();
             switch (enemy.getEnemyType()){
-                case Fish:   stars.add(new SquashStar(enemy.getBounds().x,enemy.getBounds().y, StarColor.Blue,batch)); break;
-                case Shark:  stars.add(new SquashStar(enemy.getBounds().x,enemy.getBounds().y, StarColor.Grey,batch)); break;
+                case Fish:   effects.add(new SquashStar(enemy.getBounds().x,enemy.getBounds().y, StarColor.Blue,batch)); break;
+                case Shark:  effects.add(new SquashStar(enemy.getBounds().x,enemy.getBounds().y, StarColor.Grey,batch)); break;
             }
         }
     }
